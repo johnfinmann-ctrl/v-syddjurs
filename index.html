@@ -70,6 +70,9 @@
         <p class="text-sm text-slate-400">Henter indhold…</p>
     </div>
 
+    <!-- STATUS-PILLE: Gemmer… / Gemt og offentliggjort / Fejl -->
+    <div id="save-status-pill" class="hidden"></div>
+
     <!-- HEADER -->
     <header class="sticky top-0 z-40 bg-v-blue border-b border-blue-800/30 px-4 py-3 flex items-center justify-center shadow-md">
         <div class="flex items-center gap-2">
@@ -284,11 +287,13 @@
                 <div class="text-center space-y-1">
                     <div class="w-12 h-12 rounded-2xl bg-blue-50 text-v-blue flex items-center justify-center mx-auto mb-2"><i data-lucide="lock" class="w-6 h-6"></i></div>
                     <h2 class="text-lg font-bold">Administration</h2>
-                    <p class="text-slate-500 text-xs">Indtast adgangskode for at administrere appens indhold</p>
+                    <p class="text-slate-500 text-xs">Log ind med din administrator- eller redaktørkonto</p>
                 </div>
                 <div class="space-y-3">
-                    <input type="password" id="admin-pin" placeholder="Adgangskode" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-v-blue/20 focus:border-v-blue text-center text-lg tracking-widest">
-                    <button onclick="verifyAdminPin()" class="w-full py-3 bg-v-blue hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors shadow-sm">Log ind</button>
+                    <input type="email" id="admin-email" placeholder="E-mail" autocomplete="username" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-v-blue/20 focus:border-v-blue text-sm">
+                    <input type="password" id="admin-pin" placeholder="Adgangskode" autocomplete="current-password" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-v-blue/20 focus:border-v-blue text-sm">
+                    <button id="admin-login-btn" onclick="loginAdmin()" class="w-full py-3 bg-v-blue hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors shadow-sm">Log ind</button>
+                    <p id="admin-login-error" class="hidden text-xs text-rose-600 text-center"></p>
                 </div>
             </div>
 
@@ -298,6 +303,7 @@
                     <div class="flex items-center gap-2">
                         <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                         <span class="font-semibold text-sm">Admin Dashboard</span>
+                        <span id="admin-role-badge" class="text-[10px] font-bold uppercase tracking-wide bg-blue-50 text-v-blue px-2 py-0.5 rounded-full"></span>
                     </div>
                     <button onclick="logoutAdmin()" class="text-xs font-medium text-rose-600 hover:underline">Log ud</button>
                 </div>
@@ -401,39 +407,25 @@
         // 13. SUPABASE KONFIGURATION OG DATALAG (FÆLLES DATABASE)
         // ==================================================
         /*
-          OPSÆTNING (skal gøres ét sted, af jer, i jeres eget Supabase-projekt):
+          Denne app bruger Supabase til:
+            - Fælles indhold (app_content) — læses af alle, skrives kun af admin/redaktør
+            - Login og roller (Supabase Authentication + profiles-tabellen)
+            - Billeder (Supabase Storage, bucket "media")
 
-          1) Opret et gratis projekt på https://supabase.com
-          2) Indsæt jeres Project URL og anon/public API-nøgle nedenfor
-             (Settings → API i Supabase-dashboardet).
-          3) Kør denne SQL i Supabase SQL Editor for at oprette databasen:
+          Se de vedlagte SQL-filer (schema.sql, storage.sql) for den fulde opsætning,
+          der skal køres i Supabase SQL Editor. Kort fortalt:
 
-             create table app_content (
-                 key text primary key,
-                 value jsonb not null,
-                 updated_at timestamptz not null default now()
-             );
+          1) app_content: fælles indhold, offentligt læsbar, kun admin/redaktør må skrive
+          2) profiles: kobler en logget ind bruger til en rolle ('admin' eller 'redaktor')
+          3) Storage-bucket "media": offentligt læsbar, kun admin/redaktør må uploade
+          4) Realtime skal aktiveres for app_content (Database → Replication)
+          5) Administratorer/redaktører oprettes under Authentication → Users, og får
+             derefter en tilsvarende række i profiles med den ønskede rolle.
 
-             alter table app_content enable row level security;
-
-             -- Alle må læse OG skrive, da appen ikke bruger Supabase Auth —
-             -- adgangskontrol sker udelukkende via admin-koden (2026) i selve appen.
-             create policy "Offentlig læse- og skriveadgang"
-                 on app_content for all
-                 using (true)
-                 with check (true);
-
-          4) Aktivér Realtime for tabellen: Database → Replication →
-             slå "app_content" til i den publication, der hedder supabase_realtime.
-
-          VIGTIGT SIKKERHEDSFORBEHOLD:
-          Fordi der ikke bruges Supabase Auth, er det admin-koden i selve appen (2026),
-          der forhindrer almindelige brugere i at se admin-panelet — IKKE Supabase.
-          Den offentlige anon-nøgle ligger synligt i denne fils kildekode, så enhver,
-          der kender nøglen, teknisk kan skrive til databasen uden om appen. Det er en
-          acceptabel model til en intern/demo-brug, men ikke til beskyttelse af følsomme
-          data. Skal I have "rigtig" adgangskontrol senere, kan Supabase Auth tilføjes
-          som et separat skridt.
+          SIKKERHED: Adgang til at redigere er nu håndhævet af Supabase selv via
+          Row Level Security — ikke kun af login-skærmen i appen. Selv hvis nogen
+          finder den offentlige anon/publishable-nøgle, kan de ikke skrive til
+          app_content eller uploade filer uden at være logget ind som admin/redaktør.
         */
 
         const SUPABASE_URL = 'https://dvsiolbzchoudfbbmyax.supabase.co';
@@ -526,20 +518,33 @@
         }
 
         // Gemmer én nøgle i Supabase (bruges af alle admin-gem-funktioner via sync()).
+        // Kaster en fejl videre, så sync() kan vise korrekt status til administrator.
         async function cloudSave(key, value) {
             if (!supabaseClient) {
-                console.warn('Supabase er ikke konfigureret — ændringen er kun gemt lokalt i denne session.');
-                return;
+                throw new Error('Supabase er ikke konfigureret.');
             }
-            try {
-                const { error } = await supabaseClient
-                    .from('app_content')
-                    .upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: 'key' });
-                if (error) throw error;
-            } catch (err) {
-                console.error('Kunne ikke gemme "' + key + '" i Supabase:', err);
-                alert('Ændringen kunne ikke gemmes i Supabase. Tjek din internetforbindelse og Supabase-opsætning.');
-            }
+            const { error } = await supabaseClient
+                .from('app_content')
+                .upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: 'key' });
+            if (error) throw error;
+        }
+
+        // Uploader en fil til Supabase Storage (bucket "media") og returnerer en
+        // permanent, offentlig URL. Bruges til billeder/QR-koder, så vi aldrig
+        // gemmer store base64-strenge direkte i app_content.
+        async function uploadToStorage(file, folder) {
+            if (!supabaseClient) throw new Error('Supabase er ikke konfigureret.');
+            const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+            const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+
+            const { error } = await supabaseClient.storage.from('media').upload(path, file, {
+                cacheControl: '3600',
+                upsert: false
+            });
+            if (error) throw error;
+
+            const { data } = supabaseClient.storage.from('media').getPublicUrl(path);
+            return data.publicUrl;
         }
 
         // Initialiseres tomt og udfyldes af loadStateFromCloud() ved opstart.
@@ -553,14 +558,50 @@
             CONTENT_KEYS.forEach((key, i) => { state[key] = results[i]; });
         }
 
-        // Sync helper: gemmer ændringen i Supabase og opdaterer skærmen med det samme.
-        // Andre brugeres/enheders apps opdateres automatisk via Realtime-abonnementet nedenfor.
-        function sync(key) {
-            renderAll();
-            cloudSave(key, state[key]);
+        // ==================================================
+        // STATUS-PILLE: Gemmer… / Gemt og offentliggjort / Fejl
+        // ==================================================
+        let saveStatusTimer = null;
+        function showSaveStatus(status) {
+            const pill = document.getElementById('save-status-pill');
+            if (!pill) return;
+            clearTimeout(saveStatusTimer);
+
+            const variants = {
+                saving:  { text: 'Gemmer …',                       cls: 'bg-slate-800 text-white' },
+                success: { text: '✓ Gemt og offentliggjort',       cls: 'bg-emerald-600 text-white' },
+                error:   { text: '⚠ Fejl – ændringen blev ikke gemt', cls: 'bg-rose-600 text-white' }
+            };
+            const v = variants[status];
+            pill.className = 'fixed left-1/2 -translate-x-1/2 bottom-24 z-[90] px-4 py-2.5 rounded-full shadow-lg text-sm font-semibold transition-all duration-300 ' + v.cls;
+            pill.textContent = v.text;
+            pill.classList.remove('hidden', 'opacity-0');
+
+            if (status !== 'saving') {
+                saveStatusTimer = setTimeout(() => {
+                    pill.classList.add('opacity-0');
+                    setTimeout(() => pill.classList.add('hidden'), 300);
+                }, status === 'error' ? 4000 : 2200);
+            }
         }
 
-        // Realtime: lyt efter ændringer fra andre administratorer/enheder,
+        // Sync helper: gemmer ændringen i Supabase, genindlæser derefter samme nøgle
+        // FRA Supabase (så visningen altid afspejler det, der reelt er publiceret),
+        // og opdaterer skærmen. Andre enheder opdateres automatisk via Realtime.
+        async function sync(key) {
+            showSaveStatus('saving');
+            try {
+                await cloudSave(key, state[key]);
+                state[key] = await cloudFetch(key);
+                renderAll();
+                showSaveStatus('success');
+            } catch (err) {
+                console.error('Kunne ikke gemme "' + key + '" i Supabase:', err);
+                showSaveStatus('error');
+            }
+        }
+
+        // Realtime: lyt efter ændringer fra andre administratorer/redaktører/enheder,
         // og opdater appen automatisk uden genindlæsning.
         function subscribeToRealtimeUpdates() {
             if (!supabaseClient) return;
@@ -729,7 +770,7 @@
                     <h2 class="text-xl font-bold text-v-blue flex items-center gap-2"><i data-lucide="shield-check"></i> Privatliv & GDPR</h2>
                     <div class="text-xs text-slate-600 space-y-3 leading-relaxed">
                         <p class="font-medium text-slate-800 text-sm">Behandling af personoplysninger</p>
-                        <p>Denne app fungerer som en informationsportal for Venstre Syddjurs. Appens indhold (nyheder, kalender, video med mere) gemmes i en fælles database (Supabase), så alle brugere ser det samme opdaterede indhold. Adgang til at redigere indhold er beskyttet med en administrator-kode.</p>
+                        <p>Denne app fungerer som en informationsportal for Venstre Syddjurs. Appens indhold (nyheder, kalender, video med mere) gemmes i en fælles database (Supabase), så alle brugere ser det samme opdaterede indhold. Kun godkendte administratorer og redaktører kan logge ind og redigere indholdet.</p>
                         <p>Der indsamles ikke personhenførbare data eller trackere ved normal brug af denne applikation. Ved klik på eksterne links (såsom indmeldelse eller sociale medier) er din interaktion underlagt de respektive tredjeparters privatlivspolitik.</p>
                     </div>
                 `;
@@ -1034,21 +1075,83 @@
         }
 
         // ==================================================
-        // 12. ADMIN CORE DASHBOARD
+        // 12. ADMIN CORE DASHBOARD (Supabase Auth + roller)
         // ==================================================
-        function verifyAdminPin() {
-            const pin = document.getElementById('admin-pin').value;
-            if (pin === '2026') {
-                isAdminLoggedIn = true;
-                document.getElementById('admin-pin').value = '';
-                checkAdminState();
-            } else {
-                alert('Forkert kode! Prøv igen.');
+        let currentUserRole = null; // 'admin' | 'redaktor' | null
+
+        // Slår brugerens rolle op i "profiles"-tabellen. Kun 'admin' og 'redaktor'
+        // må tilgå admin-panelet — alle andre roller (eller ingen profil) afvises.
+        async function fetchUserRole(userId) {
+            if (!supabaseClient) return null;
+            try {
+                const { data, error } = await supabaseClient
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', userId)
+                    .maybeSingle();
+                if (error) throw error;
+                return data ? data.role : null;
+            } catch (err) {
+                console.error('Kunne ikke hente brugerrolle:', err);
+                return null;
             }
         }
 
-        function logoutAdmin() {
+        function showLoginError(msg) {
+            const el = document.getElementById('admin-login-error');
+            el.textContent = msg;
+            el.classList.remove('hidden');
+        }
+
+        async function loginAdmin() {
+            if (!supabaseClient) {
+                showLoginError('Supabase er ikke konfigureret korrekt.');
+                return;
+            }
+            const email = document.getElementById('admin-email').value.trim();
+            const password = document.getElementById('admin-pin').value;
+            const btn = document.getElementById('admin-login-btn');
+            document.getElementById('admin-login-error').classList.add('hidden');
+
+            if (!email || !password) {
+                showLoginError('Udfyld både e-mail og adgangskode.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Logger ind…';
+
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                btn.disabled = false;
+                btn.textContent = 'Log ind';
+                showLoginError('Forkert e-mail eller adgangskode.');
+                return;
+            }
+
+            const role = await fetchUserRole(data.user.id);
+            btn.disabled = false;
+            btn.textContent = 'Log ind';
+
+            if (role !== 'admin' && role !== 'redaktor') {
+                await supabaseClient.auth.signOut();
+                showLoginError('Denne konto har ikke administrator- eller redaktør-adgang.');
+                return;
+            }
+
+            currentUserRole = role;
+            isAdminLoggedIn = true;
+            document.getElementById('admin-pin').value = '';
+            checkAdminState();
+        }
+
+        async function logoutAdmin() {
+            if (supabaseClient) {
+                await supabaseClient.auth.signOut();
+            }
             isAdminLoggedIn = false;
+            currentUserRole = null;
             document.getElementById('admin-pin').value = '';
             checkAdminState();
         }
@@ -1056,10 +1159,12 @@
         function checkAdminState() {
             const loginBox = document.getElementById('admin-login-box');
             const dashboard = document.getElementById('admin-dashboard');
-            
+
             if (isAdminLoggedIn) {
                 loginBox.classList.add('hidden');
                 dashboard.classList.remove('hidden');
+                const badge = document.getElementById('admin-role-badge');
+                if (badge) badge.textContent = currentUserRole === 'admin' ? 'Administrator' : 'Redaktør';
             } else {
                 loginBox.classList.remove('hidden');
                 dashboard.classList.add('hidden');
@@ -1585,7 +1690,6 @@
             state.vu.arranger = document.getElementById('form-vu-arranger').value;
             state.vu.billeder = [document.getElementById('form-vu-img').value];
             sync('vu');
-            alert('VU-siden blev opdateret!');
             closeAdminModule();
         }
 
@@ -1599,21 +1703,29 @@
             state.kontakt.instagram = document.getElementById('form-kon-ig').value;
             state.kontakt.linkedin = document.getElementById('form-kon-li').value;
             sync('kontakt');
-            alert('Kontaktoplysninger blev gemt!');
             closeAdminModule();
         }
 
-        // Læser en uploadet billedfil ind som base64 og viser den som forhåndsvisning,
-        // så administrator kan udskifte MobilePay QR-koden med et rigtigt billede.
-        function handleMobilepayQrUpload(event) {
+        // Uploader den valgte QR-billedfil til Supabase Storage og gemmer den
+        // permanente offentlige URL, så administrator kan udskifte MobilePay QR-koden.
+        async function handleMobilepayQrUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
-            const reader = new FileReader();
-            reader.onload = () => {
-                document.getElementById('form-mp-qr-data').value = reader.result;
-                document.getElementById('form-mp-qr-preview').src = reader.result;
-            };
-            reader.readAsDataURL(file);
+            const preview = document.getElementById('form-mp-qr-preview');
+            const originalSrc = preview.src;
+            preview.classList.add('opacity-40');
+
+            try {
+                const url = await uploadToStorage(file, 'mobilepay');
+                document.getElementById('form-mp-qr-data').value = url;
+                preview.src = url;
+            } catch (err) {
+                console.error('Kunne ikke uploade QR-billede:', err);
+                alert('Billedet kunne ikke uploades til Supabase Storage. Prøv igen.');
+                preview.src = originalSrc;
+            } finally {
+                preview.classList.remove('opacity-40');
+            }
         }
 
         // Fjerner et evt. uploadet billede, så QR-koden igen genereres automatisk ud fra nummeret.
@@ -1625,15 +1737,14 @@
                 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent('MobilePay: ' + nummer);
         }
 
-        function saveAdminMobilepay(e) {
+        async function saveAdminMobilepay(e) {
             e.preventDefault();
             state.mobilepay.heading = document.getElementById('form-mp-heading').value;
             state.mobilepay.nummer = document.getElementById('form-mp-nummer').value;
             state.mobilepay.tekst = document.getElementById('form-mp-tekst').value;
             state.mobilepay.qrImage = document.getElementById('form-mp-qr-data').value;
             state.mobilepay.visPaaForside = document.getElementById('form-mp-vis').checked;
-            sync('mobilepay');
-            alert('MobilePay-sektionen blev gemt!');
+            await sync('mobilepay');
             closeAdminModule();
         }
 
@@ -1679,6 +1790,21 @@
         // ==================================================
         async function initApp() {
             await loadStateFromCloud();
+
+            // Genkend evt. allerede aktiv login-session (fx efter genindlæsning af siden)
+            if (supabaseClient) {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (session) {
+                    const role = await fetchUserRole(session.user.id);
+                    if (role === 'admin' || role === 'redaktor') {
+                        currentUserRole = role;
+                        isAdminLoggedIn = true;
+                    } else {
+                        await supabaseClient.auth.signOut();
+                    }
+                }
+            }
+
             renderAll();
             checkAdminState();
             subscribeToRealtimeUpdates();
