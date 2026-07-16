@@ -345,6 +345,10 @@
                         <span class="text-2xl group-hover:scale-110 transition-transform">💳</span>
                         <span class="font-semibold text-sm">MobilePay</span>
                     </button>
+                    <button id="admin-users-card" onclick="openAdminModule('brugere')" class="hidden p-4 bg-white border border-slate-200 hover:border-v-blue rounded-2xl shadow-sm text-center flex flex-col items-center justify-center gap-2 transition-all group">
+                        <span class="text-2xl group-hover:scale-110 transition-transform">👥</span>
+                        <span class="font-semibold text-sm">Brugere</span>
+                    </button>
                     <button onclick="openAdminModule('indstillinger')" class="p-4 bg-white border border-slate-200 hover:border-v-blue rounded-2xl shadow-sm text-center col-span-2 flex flex-col items-center justify-center gap-2 transition-all group">
                         <span class="text-2xl group-hover:scale-110 transition-transform">⚙</span>
                         <span class="font-semibold text-sm">Indstillinger (Kategorier)</span>
@@ -1159,12 +1163,14 @@
         function checkAdminState() {
             const loginBox = document.getElementById('admin-login-box');
             const dashboard = document.getElementById('admin-dashboard');
+            const usersCard = document.getElementById('admin-users-card');
 
             if (isAdminLoggedIn) {
                 loginBox.classList.add('hidden');
                 dashboard.classList.remove('hidden');
                 const badge = document.getElementById('admin-role-badge');
                 if (badge) badge.textContent = currentUserRole === 'admin' ? 'Administrator' : 'Redaktør';
+                if (usersCard) usersCard.classList.toggle('hidden', currentUserRole !== 'admin');
             } else {
                 loginBox.classList.remove('hidden');
                 dashboard.classList.add('hidden');
@@ -1327,6 +1333,40 @@
                         <button type="submit" class="w-full py-2.5 bg-v-blue text-white font-semibold rounded-xl text-sm">Gem MobilePay</button>
                     </form>
                 `;
+            } else if (moduleKey === 'brugere') {
+                if (currentUserRole !== 'admin') {
+                    html = `<p class="text-sm text-rose-600">Kun administratorer må administrere brugere.</p>`;
+                } else {
+                    html = `
+                        <h3 class="text-lg font-bold text-v-blue border-b pb-2 mb-3">👥 Brugere & Roller</h3>
+
+                        <form onsubmit="inviteAdminUser(event)" class="space-y-2 bg-blue-50 p-3 rounded-xl">
+                            <label class="text-xs font-bold text-slate-500 uppercase">Inviter ny bruger</label>
+                            <input type="email" id="form-invite-email" placeholder="E-mail" required class="w-full border p-2 rounded-xl text-sm">
+                            <select id="form-invite-role" class="w-full border p-2 rounded-xl text-sm">
+                                <option value="redaktor">Redaktør</option>
+                                <option value="admin">Administrator</option>
+                            </select>
+                            <button type="submit" class="w-full py-2 bg-v-blue text-white font-semibold rounded-xl text-sm">Send invitation</button>
+                            <p class="text-[11px] text-slate-500">Brugeren modtager en e-mail og vælger selv sin adgangskode. Ingen fælles kode.</p>
+                        </form>
+
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase">Nuværende brugere</label>
+                            <div id="admin-users-list" class="bg-slate-50 p-3 rounded-xl divide-y divide-slate-200 mt-1">
+                                <p class="text-xs text-slate-400 py-2">Henter…</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase">Seneste aktivitet</label>
+                            <div id="admin-audit-list" class="bg-slate-50 p-3 rounded-xl divide-y divide-slate-200 mt-1 max-h-64 overflow-y-auto">
+                                <p class="text-xs text-slate-400 py-2">Henter…</p>
+                            </div>
+                        </div>
+                    `;
+                    setTimeout(() => { listAdminUsers(); listAuditLog(); }, 50);
+                }
             } else if (moduleKey === 'indstillinger') {
                 html = `
                     <h3 class="text-lg font-bold text-v-blue border-b pb-2 mb-3">⚙ Administrer Kategorier</h3>
@@ -1746,6 +1786,149 @@
             state.mobilepay.visPaaForside = document.getElementById('form-mp-vis').checked;
             await sync('mobilepay');
             closeAdminModule();
+        }
+
+        // ==================================================
+        // BRUGERE & ROLLER (kun administratorer)
+        // ==================================================
+
+        // Henter alle profiler (kun tilladt for admin, jf. RLS) og tegner listen
+        // med rolle-dropdown (gemmer med det samme ved ændring) og "Fjern adgang".
+        async function listAdminUsers() {
+            const container = document.getElementById('admin-users-list');
+            if (!container || !supabaseClient) return;
+
+            const { data, error } = await supabaseClient
+                .from('profiles')
+                .select('id, email, role, created_at')
+                .order('created_at', { ascending: true });
+
+            if (error) {
+                container.innerHTML = `<p class="text-xs text-rose-600 py-2">Kunne ikke hente brugere: ${error.message}</p>`;
+                return;
+            }
+
+            if (!data.length) {
+                container.innerHTML = `<p class="text-xs text-slate-400 py-2">Ingen brugere fundet.</p>`;
+                return;
+            }
+
+            container.innerHTML = data.map(u => `
+                <div class="py-2.5 flex items-center justify-between gap-2">
+                    <div class="min-w-0">
+                        <p class="text-sm font-medium truncate">${u.email || u.id}</p>
+                        <p class="text-[11px] text-slate-400">Oprettet ${new Date(u.created_at).toLocaleDateString('da-DK')}</p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <select onchange="saveUserRole('${u.id}', this.value)" class="border rounded-lg text-xs p-1.5">
+                            <option value="redaktor" ${u.role === 'redaktor' ? 'selected' : ''}>Redaktør</option>
+                            <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Administrator</option>
+                        </select>
+                        <button onclick="revokeUserAccess('${u.id}', '${(u.email || '').replace(/'/g, "\\'")}')" class="text-rose-600 hover:underline text-xs font-medium">Fjern</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Ændrer en brugers rolle direkte (tilladt for admin via RLS på profiles).
+        async function saveUserRole(userId, newRole) {
+            showSaveStatus('saving');
+            try {
+                const { error } = await supabaseClient.from('profiles').update({ role: newRole }).eq('id', userId);
+                if (error) throw error;
+                showSaveStatus('success');
+            } catch (err) {
+                console.error('Kunne ikke ændre rolle:', err);
+                showSaveStatus('error');
+                listAdminUsers();
+            }
+        }
+
+        // Fjerner en brugers adgang til admin-panelet (sletter deres profil-række).
+        // Selve login-kontoen i Supabase Auth består, men uden en profiles-række
+        // med rollen 'admin'/'redaktor' kan de ikke længere redigere noget.
+        async function revokeUserAccess(userId, email) {
+            if (!confirm(`Fjern admin/redaktør-adgang for ${email || 'denne bruger'}?`)) return;
+            showSaveStatus('saving');
+            try {
+                const { error } = await supabaseClient.from('profiles').delete().eq('id', userId);
+                if (error) throw error;
+                showSaveStatus('success');
+                listAdminUsers();
+            } catch (err) {
+                console.error('Kunne ikke fjerne adgang:', err);
+                showSaveStatus('error');
+            }
+        }
+
+        // Kalder invite-user Edge Function'en, som sikkert opretter den nye bruger
+        // (kræver service_role-nøglen, som kun findes server-side i funktionen).
+        async function inviteAdminUser(e) {
+            e.preventDefault();
+            const email = document.getElementById('form-invite-email').value.trim();
+            const role = document.getElementById('form-invite-role').value;
+            const btn = e.target.querySelector('button[type="submit"]');
+
+            btn.disabled = true;
+            btn.textContent = 'Sender…';
+            showSaveStatus('saving');
+
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                const res = await fetch(`${SUPABASE_URL}/functions/v1/invite-user`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.access_token}`,
+                        'apikey': SUPABASE_ANON_KEY
+                    },
+                    body: JSON.stringify({ email, role })
+                });
+                const json = await res.json();
+                if (!res.ok) throw new Error(json.error || 'Ukendt fejl');
+
+                showSaveStatus('success');
+                document.getElementById('form-invite-email').value = '';
+                listAdminUsers();
+            } catch (err) {
+                console.error('Kunne ikke invitere bruger:', err);
+                showSaveStatus('error');
+                alert('Kunne ikke sende invitation: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Send invitation';
+            }
+        }
+
+        // Viser de seneste ændringer fra audit_log (kun læsbar for admin, jf. RLS).
+        async function listAuditLog() {
+            const container = document.getElementById('admin-audit-list');
+            if (!container || !supabaseClient) return;
+
+            const { data, error } = await supabaseClient
+                .from('audit_log')
+                .select('action, row_key, changed_by_email, changed_at')
+                .order('changed_at', { ascending: false })
+                .limit(20);
+
+            if (error) {
+                container.innerHTML = `<p class="text-xs text-rose-600 py-2">Kunne ikke hente aktivitet: ${error.message}</p>`;
+                return;
+            }
+            if (!data.length) {
+                container.innerHTML = `<p class="text-xs text-slate-400 py-2">Ingen aktivitet endnu.</p>`;
+                return;
+            }
+
+            const actionLabel = { INSERT: 'oprettede', UPDATE: 'ændrede', DELETE: 'slettede' };
+            container.innerHTML = data.map(a => `
+                <div class="py-2 text-xs">
+                    <span class="font-medium">${a.changed_by_email || 'Ukendt bruger'}</span>
+                    ${actionLabel[a.action] || a.action}
+                    <span class="font-medium">${a.row_key}</span>
+                    <span class="text-slate-400 block">${new Date(a.changed_at).toLocaleString('da-DK')}</span>
+                </div>
+            `).join('');
         }
 
         function listAdminCategories() {
