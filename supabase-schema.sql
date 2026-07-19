@@ -321,3 +321,31 @@ from organizations o,
   ) as v(slug,label,color_key)
 where o.slug = 'venstre-syddjurs'
 on conflict (org_id, slug) do nothing;
+
+-- ============================================================
+-- RC2.3: Byrådsside
+-- ============================================================
+create table if not exists council_members (
+  id uuid primary key default gen_random_uuid(),
+  org_id uuid not null references organizations(id) on delete cascade,
+  name text not null,
+  title text default 'Byrådsmedlem',
+  area text,
+  email text,
+  phone text,
+  photo_url text,
+  sort_order integer not null default 0,
+  active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+alter table council_members enable row level security;
+drop policy if exists "byrådet er offentligt læsbart" on council_members;
+create policy "byrådet er offentligt læsbart" on council_members for select using (active = true);
+drop policy if exists "admin redigerer byrådet" on council_members;
+create policy "admin redigerer byrådet" on council_members for all using (
+  is_superadmin() or (current_org_id() = org_id and current_role() in ('administrator','redaktoer'))
+) with check (
+  is_superadmin() or (current_org_id() = org_id and current_role() in ('administrator','redaktoer'))
+);
+create index if not exists council_members_org_sort_idx on council_members(org_id, sort_order);

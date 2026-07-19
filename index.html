@@ -67,13 +67,19 @@ main{padding-bottom:calc(96px + var(--safe-bottom));}
 .section-head{display:flex; align-items:center; justify-content:space-between; padding:4px 20px 12px;}
 .section-head h3{font-size:19px;}
 .section-head .see-all{font-size:13px; font-weight:700; color:var(--primary); display:flex; align-items:center; gap:4px;}
-.hero-wrap{padding:8px 0 22px; position:relative;}
-.hero-scroller{display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; padding:0 20px; scroll-padding:20px;}
+.hero-wrap{padding:12px 0 24px; position:relative;}
+.hero-scroller{display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; padding:0 20px; scroll-padding:20px;}
 .hero-scroller::-webkit-scrollbar{display:none;}
-.hero-card{flex:0 0 84%; scroll-snap-align:start; position:relative; border-radius:var(--radius-xl); overflow:hidden; aspect-ratio:4/3.15; min-height:280px; background:var(--primary-deep); box-shadow:var(--shadow-lift);}
+.hero-card{flex:0 0 91%; scroll-snap-align:center; position:relative; border-radius:26px; overflow:hidden; aspect-ratio:16/10; min-height:250px; background:linear-gradient(135deg,var(--primary-deep),var(--primary)); box-shadow:0 18px 42px -22px rgba(15,27,61,.55); isolation:isolate;}
+.hero-card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 85% 10%,rgba(255,255,255,.24),transparent 34%);pointer-events:none;}
 .hero-card img, .hero-card video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;}
-.hero-card .scrim{position:absolute; inset:0; background:linear-gradient(0deg, rgba(6,10,24,.88) 0%, rgba(6,10,24,.35) 45%, rgba(6,10,24,0) 68%);}
-.hero-card .content{position:absolute; left:0; right:0; bottom:0; padding:58px 22px 22px; color:#fff;}
+.hero-card .scrim{position:absolute; inset:0; background:linear-gradient(90deg, rgba(10,25,55,.90) 0%, rgba(10,25,55,.62) 52%, rgba(10,25,55,.18) 100%);}
+.hero-card .content{position:absolute; left:0; right:0; bottom:0; padding:76px 22px 22px; color:#fff; z-index:2;}
+.hero-brand{position:absolute;left:20px;top:0;z-index:4;display:flex;align-items:flex-start;gap:8px;pointer-events:none;}
+.hero-brand .cord{width:2px;height:48px;background:linear-gradient(#d9e7ff,#fff);box-shadow:0 0 0 1px rgba(15,27,61,.08);margin-left:19px;}
+.hero-brand .pass{margin-left:-30px;margin-top:42px;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.96);color:var(--primary-deep);border-radius:12px;padding:9px 11px;box-shadow:0 10px 24px rgba(15,27,61,.28);transform:rotate(-2deg);}
+.hero-brand .pass-mark{width:30px;height:30px;border-radius:9px;background:var(--primary);color:#fff;display:grid;place-items:center;font:800 20px var(--font-display);}
+.hero-brand .pass-name{font:800 11px/1.1 var(--font-display);max-width:80px;}
 .tag{display:inline-flex; align-items:center; padding:5px 12px; border-radius:999px; font-size:11.5px; font-weight:800; letter-spacing:.03em; text-transform:uppercase; margin-bottom:10px;}
 .hero-card h2{font-size:23px; line-height:1.18; margin-bottom:10px; color:#fff;}
 .hero-card .excerpt{font-size:14.5px; color:rgba(255,255,255,.8); line-height:1.5; margin-bottom:16px; max-width:92%;}
@@ -168,6 +174,15 @@ main{padding-bottom:calc(96px + var(--safe-bottom));}
 .sheet.open{display:block; animation:sheetIn .35s var(--ease);}
 @keyframes sheetIn{from{transform:translateY(28px); opacity:0;} to{transform:none; opacity:1;}}
 .sheet-header{position:sticky; top:0; z-index:5; display:flex; justify-content:space-between; align-items:center; padding:16px 20px; background:var(--glass); backdrop-filter:blur(18px);}
+
+.council-intro{margin:18px 20px 14px;padding:20px;border-radius:22px;background:linear-gradient(135deg,var(--primary-deep),var(--primary));color:#fff;box-shadow:var(--shadow-lift)}
+.council-intro h2{color:#fff;margin:0 0 7px}.council-intro p{margin:0;color:rgba(255,255,255,.82);font-size:14px;line-height:1.5}
+.council-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:0 20px 28px}
+.council-card{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:var(--shadow-soft);text-align:left;padding:0;color:var(--ink)}
+.council-photo{aspect-ratio:1/1;background:linear-gradient(135deg,#dfe8f7,#f7f9fd);background-size:cover;background-position:center;display:grid;place-items:center;color:var(--ink-soft)}
+.council-photo .icon{width:34px;height:34px}.council-copy{padding:13px}.council-copy strong{display:block;font:800 15px/1.2 var(--font-display);margin-bottom:4px}.council-copy span{display:block;font-size:12px;color:var(--primary);font-weight:700}.council-copy small{display:block;font-size:11.5px;color:var(--ink-soft);margin-top:5px}
+@media(min-width:700px){.council-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+
 .sheet .hero-media{width:100%; max-height:50vh; object-fit:cover; background:var(--primary-deep);}
 .sheet-content{padding:24px 22px 60px; max-width:600px; margin:0 auto;}
 .sheet-content h1{font-size:29px; line-height:1.18; margin-bottom:12px;}
@@ -290,7 +305,7 @@ nav.tabbar button[aria-current="page"] .icon{transform:translateY(-2px) scale(1.
 
   <main id="main">
     <section class="view active" id="view-home" aria-label="Forside">
-      <div class="hero-wrap"><div class="hanging-brand" aria-hidden="true"><div class="lanyard"></div><div class="clip"></div><div class="badge"><div class="badge-mark">V</div><div class="badge-name" id="badgeOrgName">Venstre<br>Syddjurs</div></div></div><div class="hero-scroller" id="heroScroller"></div><div class="dots" id="heroDots"></div></div>
+      <div class="hero-wrap"><div class="hero-brand" aria-hidden="true"><div class="cord"></div><div class="pass"><div class="pass-mark">V</div><div class="pass-name" id="badgeOrgName">Venstre Syddjurs</div></div></div><div class="hero-scroller" id="heroScroller"></div><div class="dots" id="heroDots"></div></div>
       <div class="section-head"><h3>Det sker</h3><button class="see-all" id="seeAllKalender">Se alle <svg class="icon" style="width:15px;height:15px;"><use href="#i-chevron"/></svg></button></div>
       <div class="mini-scroller" id="miniScroller"></div>
       <div class="section-head"><h3>Seneste</h3></div>
@@ -319,7 +334,7 @@ nav.tabbar button[aria-current="page"] .icon{transform:translateY(-2px) scale(1.
       <div class="list-section" id="mereAccount"></div>
       <div class="list-section">
         <h3>Indhold</h3>
-        <div class="list-item"><div class="ic"><svg class="icon"><use href="#i-bookmark"/></svg></div><div class="txt"><div class="t">Bogmærker</div><div class="s">Gemte opslag</div></div><button class="icon-btn" id="goFavoritter" aria-label="Åbn bogmærker"><svg class="icon"><use href="#i-chevron"/></svg></button></div>
+        <div class="list-item"><div class="ic"><svg class="icon"><use href="#i-user"/></svg></div><div class="txt"><div class="t">Byrådet</div><div class="s">Mød Venstres byrådsgruppe</div></div><button class="icon-btn" id="goCouncil" aria-label="Åbn byrådet"><svg class="icon"><use href="#i-chevron"/></svg></button></div><div class="list-item"><div class="ic"><svg class="icon"><use href="#i-bookmark"/></svg></div><div class="txt"><div class="t">Bogmærker</div><div class="s">Gemte opslag</div></div><button class="icon-btn" id="goFavoritter" aria-label="Åbn bogmærker"><svg class="icon"><use href="#i-chevron"/></svg></button></div>
         <div class="list-item"><div class="ic"><svg class="icon"><use href="#i-share"/></svg></div><div class="txt"><div class="t">Kontakt</div><div class="s" id="contactPreview">Kom i kontakt med os</div></div><button class="icon-btn" id="goKontakt" aria-label="Kontakt"><svg class="icon"><use href="#i-chevron"/></svg></button></div>
         <div class="list-item"><div class="ic"><svg class="icon"><use href="#i-shield"/></svg></div><div class="txt"><div class="t">Om platformen</div><div class="s" id="aboutPreview">Information</div></div><button class="icon-btn" id="goInformation" aria-label="Om platformen"><svg class="icon"><use href="#i-chevron"/></svg></button></div>
       </div>
@@ -330,6 +345,12 @@ nav.tabbar button[aria-current="page"] .icon{transform:translateY(-2px) scale(1.
         <div class="list-item"><div class="ic"><svg class="icon"><use href="#i-shield"/></svg></div><div class="txt"><div class="t">Databehandling</div><div class="s">GDPR og samtykke</div></div><button class="icon-btn" id="goPrivacy" aria-label="Databehandling"><svg class="icon"><use href="#i-chevron"/></svg></button></div>
       </div>
       <div class="list-section" id="mereAdminEntry"></div>
+    </section>
+
+
+    <section class="view" id="view-council" aria-label="Byrådet">
+      <div class="council-intro"><h2>Venstre i Syddjurs Byråd</h2><p>Mød Venstres byrådsmedlemmer og se deres ansvarsområder og kontaktoplysninger.</p></div>
+      <div class="council-grid" id="councilGrid"></div>
     </section>
 
     <section class="view" id="view-favoritter" aria-label="Bogmærker">
@@ -429,6 +450,7 @@ const urlParams = new URLSearchParams(location.search);
 const ORG_SLUG = urlParams.get('org') || CFG.ORG_SLUG || 'demo';
 let ORG = null;      // hele organizations-rækken
 let ORG_ID = null;
+let councilMembers = [];
 
 async function resolveOrg(){
   const { data, error } = await supabase.from('organizations').select('*').eq('slug', ORG_SLUG).single();
@@ -583,26 +605,27 @@ async function loadLikeCounts(){
   (data || []).forEach(l => { likeCounts[l.post_id] = (likeCounts[l.post_id] || 0) + 1; });
 }
 
-function renderAll(){ renderHero(); renderMini(); renderFeed(); renderHomeHighlights(); renderVideoHub(); renderEvents(); updateFabAccess(); }
+function renderAll(){ renderHero(); renderMini(); renderFeed(); renderHomeHighlights(); renderVideoHub(); renderEvents(); renderCouncil(); updateFabAccess(); }
 function escapeHtml(s){ const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
 function fmtDate(d){ return d ? new Date(d).toLocaleDateString('da-DK', { day:'numeric', month:'short' }) : ''; }
 
 function renderHero(){
   const badgeName = document.getElementById('badgeOrgName');
-  if (badgeName) badgeName.innerHTML = escapeHtml(ORG.name || 'Venstre Syddjurs').replace(/\s+/, '<br>');
+  if (badgeName) badgeName.textContent = ORG.name || 'Venstre Syddjurs';
   const top = posts.slice(0,4);
   const scroller = document.getElementById('heroScroller'); const dots = document.getElementById('heroDots');
-  if (!top.length){ scroller.innerHTML = ''; dots.innerHTML = ''; return; }
-  scroller.innerHTML = top.map(p => `
+  const slides = top.length ? top : [{ id:'welcome', title: ORG.name || 'Venstre Syddjurs', excerpt: ORG.tagline || 'Nyheder, arrangementer og politik tæt på dig.', categories:{label:'Velkommen'}, media_url:'', media_type:'image', fallback:true }];
+  scroller.innerHTML = slides.map(p => `
     <article class="hero-card" data-id="${p.id}">
-      ${p.media_type === 'video' ? `<video src="${p.media_url}" muted playsinline></video>` : `<img src="${p.media_url || ''}" alt="" loading="lazy">`}
+      ${p.media_url ? (p.media_type === 'video' ? `<video src="${p.media_url}" muted playsinline></video>` : `<img src="${p.media_url}" alt="" loading="lazy">`) : ''}
       <div class="scrim"></div>
-      <div class="content"><span class="tag" style="background:${catColorVar(p)}; color:#fff;">${p.categories?.label || ''}</span><h2>${escapeHtml(p.title)}</h2><p class="excerpt">${escapeHtml(p.excerpt || '')}</p>
-      <button class="pill-btn" data-open="${p.id}">Læs mere <svg class="icon" style="width:16px;height:16px;"><use href="#i-arrow"/></svg></button></div>
+      <div class="content"><span class="tag" style="background:${p.fallback?'rgba(255,255,255,.18)':catColorVar(p)}; color:#fff;">${p.categories?.label || ''}</span><h2>${escapeHtml(p.title)}</h2><p class="excerpt">${escapeHtml(p.excerpt || '')}</p>
+      ${p.fallback ? `<button class="pill-btn" id="heroCouncilBtn">Mød byrådet <svg class="icon" style="width:16px;height:16px;"><use href="#i-arrow"/></svg></button>` : `<button class="pill-btn" data-open="${p.id}">Læs mere <svg class="icon" style="width:16px;height:16px;"><use href="#i-arrow"/></svg></button>`}</div>
     </article>`).join('');
-  dots.innerHTML = top.map((_,i) => `<span class="${i===0?'active':''}"></span>`).join('');
+  dots.innerHTML = slides.length > 1 ? slides.map((_,i) => `<span class="${i===0?'active':''}"></span>`).join('') : '';
   scroller.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); openPost(b.dataset.open); }));
-  scroller.addEventListener('scroll', () => { const firstCard = scroller.querySelector('.hero-card'); const step = (firstCard?.offsetWidth || scroller.clientWidth) + 14; const idx = Math.round(scroller.scrollLeft / step); dots.querySelectorAll('span').forEach((d,i) => d.classList.toggle('active', i === idx)); }, { passive:true });
+  document.getElementById('heroCouncilBtn')?.addEventListener('click', () => showView('council'));
+  scroller.onscroll = () => { const firstCard = scroller.querySelector('.hero-card'); const step = (firstCard?.offsetWidth || scroller.clientWidth) + 12; const idx = Math.round(scroller.scrollLeft / step); dots.querySelectorAll('span').forEach((d,i) => d.classList.toggle('active', i === idx)); };
 }
 function renderMini(){
   const events = posts.filter(p => p.event_date).sort((a,b) => new Date(a.event_date)-new Date(b.event_date)).slice(0,6);
@@ -658,6 +681,19 @@ function renderHomeHighlights(){
   if (videoEl) videoEl.innerHTML = videos.length ? videos.map(p => `<button class="home-media-card" data-open="${p.id}"><div class="thumb"><video src="${p.media_url}" muted playsinline preload="metadata"></video><div class="play-dot"><span><svg class="icon" style="width:18px;height:18px"><use href="#i-play"/></svg></span></div></div><div class="copy"><strong>${escapeHtml(p.title)}</strong><small>${fmtDate(p.published_at)}</small></div></button>`).join('') : `<div style="padding:0 4px;color:var(--ink-soft);font-size:13.5px;">Seneste videoer vises her.</div>`;
   document.querySelectorAll('#completedEventsHome [data-open], #videosHome [data-open]').forEach(b => b.addEventListener('click', () => openPost(b.dataset.open)));
 }
+
+async function loadCouncil(){
+  if (!ORG_ID) { councilMembers = []; renderCouncil(); return; }
+  const { data, error } = await supabase.from('council_members').select('*').eq('org_id', ORG_ID).eq('active', true).order('sort_order');
+  councilMembers = error ? [] : (data || []);
+  renderCouncil();
+}
+function renderCouncil(){
+  const el = document.getElementById('councilGrid'); if (!el) return;
+  if (!councilMembers.length){ el.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><svg class="icon"><use href="#i-user"/></svg><p>Byrådsmedlemmerne tilføjes i administrationen.</p></div>`; return; }
+  el.innerHTML = councilMembers.map(m => `<article class="council-card"><div class="council-photo" ${m.photo_url?`style="background-image:url('${m.photo_url}')"`:''}>${m.photo_url?'':'<svg class="icon"><use href="#i-user"/></svg>'}</div><div class="council-copy"><strong>${escapeHtml(m.name)}</strong><span>${escapeHtml(m.title || 'Byrådsmedlem')}</span>${m.area?`<small>${escapeHtml(m.area)}</small>`:''}${m.email?`<small>${escapeHtml(m.email)}</small>`:''}</div></article>`).join('');
+}
+
 function updateFabAccess(){
   const fab = document.getElementById('fabNew');
   if (!fab) return;
@@ -754,6 +790,7 @@ function showView(name){
   document.getElementById('main').scrollTo(0,0);
 }
 document.getElementById('goFavoritter').addEventListener('click', () => showView('favoritter'));
+document.getElementById('goCouncil')?.addEventListener('click', () => showView('council'));
 document.getElementById('goKontakt').addEventListener('click', () => toast(CFG.contact?.email || 'Kontakt os'));
 document.getElementById('goInformation').addEventListener('click', () => toast(ORG.tagline || 'Nordic Operations'));
 document.getElementById('goPrivacy').addEventListener('click', () => toast('Data behandles via Supabase (EU) i henhold til GDPR.'));
@@ -876,6 +913,9 @@ function subscribeRealtime(){
   supabase.channel('posts-realtime-' + ORG_ID)
     .on('postgres_changes', { event:'*', schema:'public', table:'posts', filter:`org_id=eq.${ORG_ID}` }, () => { loadPosts(); if (canModerate()) loadAdmin(); })
     .subscribe();
+  supabase.channel('council-realtime-' + ORG_ID)
+    .on('postgres_changes', { event:'*', schema:'public', table:'council_members', filter:`org_id=eq.${ORG_ID}` }, () => loadCouncil())
+    .subscribe();
 }
 
 if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
@@ -892,6 +932,7 @@ if ('serviceWorker' in navigator) window.addEventListener('load', () => navigato
   await loadCategories();
   await loadFavorites();
   await loadPosts();
+  await loadCouncil();
   subscribeRealtime();
   const cached = await idb.all('posts');
   document.getElementById('offlineCount').textContent = cached.length;
