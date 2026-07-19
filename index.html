@@ -67,33 +67,39 @@ main{padding-bottom:calc(96px + var(--safe-bottom));}
 .section-head{display:flex; align-items:center; justify-content:space-between; padding:4px 20px 12px;}
 .section-head h3{font-size:19px;}
 .section-head .see-all{font-size:13px; font-weight:700; color:var(--primary); display:flex; align-items:center; gap:4px;}
-.hero-wrap{padding:6px 0 22px; overflow:hidden;}
-.hero-stage{position:relative; padding-top:94px;}
-.hero-stage::before{content:""; position:absolute; top:-38px; left:50%; width:210px; height:170px; transform:translateX(-50%); border:18px solid var(--primary); border-bottom-color:transparent; border-radius:50%; opacity:.96; pointer-events:none; z-index:0;}
-.hero-lanyard-left,.hero-lanyard-right{position:absolute; top:-34px; left:50%; width:18px; height:145px; background:var(--primary-deep); border-radius:12px; z-index:1; box-shadow:0 4px 12px rgba(0,0,0,.18);}
-.hero-lanyard-left{transform:translateX(-53px) rotate(-29deg);}
-.hero-lanyard-right{transform:translateX(35px) rotate(29deg); opacity:.92;}
-.hero-badge{position:absolute; top:48px; left:50%; transform:translateX(-50%); width:150px; min-height:78px; z-index:2; border-radius:18px 18px 12px 12px; background:rgba(255,255,255,.97); border:1px solid rgba(37,66,100,.12); box-shadow:0 12px 26px rgba(22,42,61,.18); display:flex; align-items:center; justify-content:center; gap:10px; padding:15px 14px 13px; color:var(--primary-deep);}
-.hero-badge::before{content:""; position:absolute; top:9px; left:50%; width:72px; height:9px; transform:translateX(-50%); border-radius:999px; background:var(--mist); box-shadow:inset 0 0 0 1px var(--line);}
-.hero-badge-mark{margin-top:9px; width:31px; height:31px; border-radius:10px; display:grid; place-items:center; background:var(--primary); color:#fff; font-family:var(--font-display); font-weight:900; font-size:19px;}
-.hero-badge-copy{margin-top:9px; line-height:1.05;}
-.hero-badge-copy strong{display:block; font-family:var(--font-display); font-size:14px; letter-spacing:.02em;}
-.hero-badge-copy span{font-size:10.5px; color:var(--ink-soft); font-weight:700;}
-.hero-scroller{position:relative; z-index:3; display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; padding:0 20px 4px;}
+.hero-wrap{padding:8px 0 22px; position:relative;}
+.hero-scroller{display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; padding:0 20px; scroll-padding:20px;}
 .hero-scroller::-webkit-scrollbar{display:none;}
-.hero-card{flex:0 0 calc(100% - 36px); scroll-snap-align:center; position:relative; border-radius:var(--radius-xl); overflow:hidden; height:430px; background:var(--primary-deep); box-shadow:var(--shadow-lift);}
+.hero-card{flex:0 0 84%; scroll-snap-align:start; position:relative; border-radius:var(--radius-xl); overflow:hidden; aspect-ratio:4/3.15; min-height:280px; background:var(--primary-deep); box-shadow:var(--shadow-lift);}
 .hero-card img, .hero-card video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;}
-.hero-card .scrim{position:absolute; inset:0; background:linear-gradient(0deg, rgba(6,10,24,.92) 0%, rgba(6,10,24,.54) 48%, rgba(6,10,24,.08) 78%);}
-.hero-card .content{position:absolute; left:0; right:0; bottom:0; padding:24px 22px 24px; color:#fff;}
-@media(max-width:380px){.hero-card{height:405px}.hero-stage{padding-top:88px}.hero-badge{width:142px}.hero-card h2{font-size:23px;}}
+.hero-card .scrim{position:absolute; inset:0; background:linear-gradient(0deg, rgba(6,10,24,.88) 0%, rgba(6,10,24,.35) 45%, rgba(6,10,24,0) 68%);}
+.hero-card .content{position:absolute; left:0; right:0; bottom:0; padding:58px 22px 22px; color:#fff;}
 .tag{display:inline-flex; align-items:center; padding:5px 12px; border-radius:999px; font-size:11.5px; font-weight:800; letter-spacing:.03em; text-transform:uppercase; margin-bottom:10px;}
-.hero-card h2{font-size:26px; line-height:1.18; margin-bottom:10px; color:#fff;}
+.hero-card h2{font-size:23px; line-height:1.18; margin-bottom:10px; color:#fff;}
 .hero-card .excerpt{font-size:14.5px; color:rgba(255,255,255,.8); line-height:1.5; margin-bottom:16px; max-width:92%;}
 .pill-btn{display:inline-flex; align-items:center; gap:8px; background:#fff; color:var(--primary-deep); font-weight:800; font-size:14px; padding:11px 20px; border-radius:999px; transition:.2s var(--ease);}
 .pill-btn:hover{transform:translateY(-2px); box-shadow:var(--shadow-lift);}
 .dots{display:flex; gap:6px; justify-content:center; margin-top:12px;}
 .dots span{width:6px; height:6px; border-radius:50%; background:var(--line); transition:.25s;}
 .dots span.active{width:18px; background:var(--primary);}
+
+.hanging-brand{position:absolute; z-index:5; top:-2px; left:50%; transform:translateX(-50%); pointer-events:none; display:flex; flex-direction:column; align-items:center;}
+.hanging-brand .lanyard{width:3px; height:55px; background:linear-gradient(#d5e8ff,#fff); box-shadow:0 0 0 1px rgba(15,27,61,.08); transform:rotate(-2deg);}
+.hanging-brand .clip{width:20px; height:12px; border-radius:5px 5px 3px 3px; background:#d8dee8; box-shadow:0 2px 5px rgba(0,0,0,.22); margin-top:-2px;}
+.hanging-brand .badge{margin-top:-1px; width:116px; min-height:72px; border-radius:13px; background:linear-gradient(145deg,#fff,#edf3ff); color:var(--primary-deep); border:1px solid rgba(255,255,255,.9); box-shadow:0 12px 28px rgba(15,27,61,.32); display:flex; align-items:center; gap:9px; padding:12px; transform:rotate(-1.5deg);}
+.hanging-brand .badge-mark{width:34px; height:34px; border-radius:10px; background:var(--primary); color:#fff; font-family:var(--font-display); font-size:23px; font-weight:800; display:grid; place-items:center;}
+.hanging-brand .badge-name{font-family:var(--font-display); font-weight:800; font-size:12px; line-height:1.12; text-align:left;}
+.home-strip{display:flex; gap:12px; overflow-x:auto; padding:0 20px 24px; scrollbar-width:none;}
+.home-strip::-webkit-scrollbar{display:none;}
+.home-media-card{flex:0 0 190px; border:1px solid var(--line); background:var(--card); border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-soft); text-align:left;}
+.home-media-card .thumb{aspect-ratio:16/10; background:var(--mist) center/cover no-repeat; position:relative; overflow:hidden;}
+.home-media-card .thumb video{width:100%;height:100%;object-fit:cover;}
+.home-media-card .play-dot{position:absolute;inset:0;display:grid;place-items:center;background:rgba(6,10,24,.18);}
+.home-media-card .play-dot span{width:42px;height:42px;border-radius:50%;background:#fff;display:grid;place-items:center;color:var(--primary-deep);}
+.home-media-card .copy{padding:12px 13px 14px;}
+.home-media-card .copy strong{display:block;font-size:13.5px;line-height:1.25;margin-bottom:5px;}
+.home-media-card .copy small{color:var(--ink-soft);font-size:11.5px;}
+
 .mini-scroller{display:flex; gap:12px; overflow-x:auto; padding:0 20px 24px; scrollbar-width:none;}
 .mini-scroller::-webkit-scrollbar{display:none;}
 .mini-card{flex:0 0 148px; background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg); padding:16px; box-shadow:var(--shadow-soft); transition:.25s var(--ease);}
@@ -284,22 +290,15 @@ nav.tabbar button[aria-current="page"] .icon{transform:translateY(-2px) scale(1.
 
   <main id="main">
     <section class="view active" id="view-home" aria-label="Forside">
-      <div class="hero-wrap">
-        <div class="hero-stage" aria-label="Fremhævede nyheder og arrangementer">
-          <span class="hero-lanyard-left" aria-hidden="true"></span>
-          <span class="hero-lanyard-right" aria-hidden="true"></span>
-          <div class="hero-badge" aria-hidden="true">
-            <span class="hero-badge-mark">V</span>
-            <span class="hero-badge-copy"><strong id="heroBadgeName">Venstre</strong><span id="heroBadgeOrg">Syddjurs</span></span>
-          </div>
-          <div class="hero-scroller" id="heroScroller"></div>
-        </div>
-        <div class="dots" id="heroDots"></div>
-      </div>
+      <div class="hero-wrap"><div class="hanging-brand" aria-hidden="true"><div class="lanyard"></div><div class="clip"></div><div class="badge"><div class="badge-mark">V</div><div class="badge-name" id="badgeOrgName">Venstre<br>Syddjurs</div></div></div><div class="hero-scroller" id="heroScroller"></div><div class="dots" id="heroDots"></div></div>
       <div class="section-head"><h3>Det sker</h3><button class="see-all" id="seeAllKalender">Se alle <svg class="icon" style="width:15px;height:15px;"><use href="#i-chevron"/></svg></button></div>
       <div class="mini-scroller" id="miniScroller"></div>
       <div class="section-head"><h3>Seneste</h3></div>
       <div class="feed" id="feedHome"></div>
+      <div class="section-head"><h3>Fra afholdte arrangementer</h3></div>
+      <div class="home-strip" id="completedEventsHome"></div>
+      <div class="section-head"><h3>Seneste video</h3><button class="see-all" id="seeAllVideo">Se alle <svg class="icon" style="width:15px;height:15px;"><use href="#i-chevron"/></svg></button></div>
+      <div class="home-strip" id="videosHome"></div>
     </section>
 
     <section class="view" id="view-nyt" aria-label="Nyt"><div class="feed" id="feedNyt"></div></section>
@@ -449,13 +448,6 @@ function applyOrgBranding(){
   Object.entries({ primary:c.primary, 'primary-deep':c.primaryDeep, secondary:c.secondary, accent:c.accent, accent2:c.accent2, accent3:c.accent3, accent4:c.accent4, mist:c.mist })
     .forEach(([k,v]) => { if (v) root.style.setProperty('--' + k, v); });
   document.getElementById('brandName').textContent = ORG.name || 'Nordic Media';
-  const badgeName = document.getElementById('heroBadgeName');
-  const badgeOrg = document.getElementById('heroBadgeOrg');
-  if (badgeName && badgeOrg){
-    const parts = (ORG.name || CFG.fallback.brand.name || 'Venstre Syddjurs').trim().split(/\s+/);
-    badgeName.textContent = parts.shift() || 'Venstre';
-    badgeOrg.textContent = parts.join(' ') || 'Syddjurs';
-  }
   document.title = ORG.name || 'Nordic Media';
   document.querySelector('meta[name="description"]').setAttribute('content', ORG.tagline || '');
   document.querySelector('meta[name="theme-color"]').setAttribute('content', c.primaryDeep || '#0F1B3D');
@@ -591,11 +583,13 @@ async function loadLikeCounts(){
   (data || []).forEach(l => { likeCounts[l.post_id] = (likeCounts[l.post_id] || 0) + 1; });
 }
 
-function renderAll(){ renderHero(); renderMini(); renderFeed(); renderVideoHub(); renderEvents(); }
+function renderAll(){ renderHero(); renderMini(); renderFeed(); renderHomeHighlights(); renderVideoHub(); renderEvents(); updateFabAccess(); }
 function escapeHtml(s){ const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
 function fmtDate(d){ return d ? new Date(d).toLocaleDateString('da-DK', { day:'numeric', month:'short' }) : ''; }
 
 function renderHero(){
+  const badgeName = document.getElementById('badgeOrgName');
+  if (badgeName) badgeName.innerHTML = escapeHtml(ORG.name || 'Venstre Syddjurs').replace(/\s+/, '<br>');
   const top = posts.slice(0,4);
   const scroller = document.getElementById('heroScroller'); const dots = document.getElementById('heroDots');
   if (!top.length){ scroller.innerHTML = ''; dots.innerHTML = ''; return; }
@@ -608,20 +602,7 @@ function renderHero(){
     </article>`).join('');
   dots.innerHTML = top.map((_,i) => `<span class="${i===0?'active':''}"></span>`).join('');
   scroller.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); openPost(b.dataset.open); }));
-  const updateHeroDots = () => {
-    const cards = [...scroller.querySelectorAll('.hero-card')];
-    if (!cards.length) return;
-    const center = scroller.scrollLeft + scroller.clientWidth / 2;
-    let idx = 0; let distance = Infinity;
-    cards.forEach((card, i) => {
-      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-      const nextDistance = Math.abs(cardCenter - center);
-      if (nextDistance < distance){ distance = nextDistance; idx = i; }
-    });
-    dots.querySelectorAll('span').forEach((d,i) => d.classList.toggle('active', i === idx));
-  };
-  scroller.addEventListener('scroll', updateHeroDots, { passive:true });
-  updateHeroDots();
+  scroller.addEventListener('scroll', () => { const firstCard = scroller.querySelector('.hero-card'); const step = (firstCard?.offsetWidth || scroller.clientWidth) + 14; const idx = Math.round(scroller.scrollLeft / step); dots.querySelectorAll('span').forEach((d,i) => d.classList.toggle('active', i === idx)); }, { passive:true });
 }
 function renderMini(){
   const events = posts.filter(p => p.event_date).sort((a,b) => new Date(a.event_date)-new Date(b.event_date)).slice(0,6);
@@ -666,6 +647,21 @@ function bindCardEvents(container){
   container.querySelectorAll('[data-fav]').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); toggleFavorite(b.dataset.fav); }));
   container.querySelectorAll('[data-like]').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); toggleLike(b.dataset.like); }));
   container.querySelectorAll('[data-share]').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); sharePost(b.dataset.share); }));
+}
+function renderHomeHighlights(){
+  const now = new Date();
+  const completed = posts.filter(p => p.event_date && new Date(p.event_date) < now && p.media_url).slice(0,6);
+  const completedEl = document.getElementById('completedEventsHome');
+  if (completedEl) completedEl.innerHTML = completed.length ? completed.map(p => `<button class="home-media-card" data-open="${p.id}"><div class="thumb" style="background-image:url('${p.media_url || ''}')"></div><div class="copy"><strong>${escapeHtml(p.title)}</strong><small>${fmtDate(p.event_date)}</small></div></button>`).join('') : `<div style="padding:0 4px;color:var(--ink-soft);font-size:13.5px;">Billeder fra afholdte arrangementer vises her.</div>`;
+  const videos = posts.filter(p => p.media_type === 'video').slice(0,4);
+  const videoEl = document.getElementById('videosHome');
+  if (videoEl) videoEl.innerHTML = videos.length ? videos.map(p => `<button class="home-media-card" data-open="${p.id}"><div class="thumb"><video src="${p.media_url}" muted playsinline preload="metadata"></video><div class="play-dot"><span><svg class="icon" style="width:18px;height:18px"><use href="#i-play"/></svg></span></div></div><div class="copy"><strong>${escapeHtml(p.title)}</strong><small>${fmtDate(p.published_at)}</small></div></button>`).join('') : `<div style="padding:0 4px;color:var(--ink-soft);font-size:13.5px;">Seneste videoer vises her.</div>`;
+  document.querySelectorAll('#completedEventsHome [data-open], #videosHome [data-open]').forEach(b => b.addEventListener('click', () => openPost(b.dataset.open)));
+}
+function updateFabAccess(){
+  const fab = document.getElementById('fabNew');
+  if (!fab) return;
+  fab.hidden = !profile || !['superadministrator','administrator','redaktoer'].includes(profile.role);
 }
 function renderVideoHub(){
   const videos = posts.filter(p => p.media_type === 'video');

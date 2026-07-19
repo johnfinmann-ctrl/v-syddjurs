@@ -61,10 +61,3 @@ afdelinger/teams-tabeller). Skal I fx senere køre en tilsvarende app for en
 anden lokalforening, tilføjes den med en ny `organizations`-række (se
 `nordic-media-v2`-leverancen for den fulde forklaring) — kildekoden i
 `index.html` skal ikke ændres, kun konfiguration og data.
-
-## 8. RC2 – hængende Venstre-karrusel
-- Forsidens fremhævede opslag vises som en swipe-karrusel med fysisk badge/snore-effekt.
-- Badge-navnet hentes fra den aktive organisation i Supabase, så branding fortsat er centralt styret.
-- Karrusellen bruger fortsat `posts`-tabellen og Realtime; der er ingen lokalt fastkodede nyheder eller arrangementer.
-- Kortene er gjort lavere og smallere, så næste kort anes og resten af forsiden stadig er synlig.
-- Ingen ændring af RLS, roller eller publiceringsflow er nødvendig for dette designmodul.

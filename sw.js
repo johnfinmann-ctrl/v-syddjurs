@@ -3,7 +3,7 @@
 // App-shell caching + offline fallback + push-notifikationer
 // ============================================================
 
-const CACHE_VERSION = 'venstre-syddjurs-v1';
+const CACHE_VERSION = 'venstre-syddjurs-rc2-2';
 const APP_SHELL = ['./', './index.html', './index.html?org=venstre-syddjurs', './config.js', './manifest.json'];
 
 self.addEventListener('install', (event) => {
