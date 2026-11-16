@@ -3,7 +3,7 @@
 <html lang="da">
 <head>
     <meta charset="UTF-8">
-    <meta name="app-version" content="RC48.35 (2026-11-17)">
+    <meta name="app-version" content="RC48.36 (2026-11-17)">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Venstre Syddjurs</title>
     <meta name="description" content="Officiel app for Venstre Syddjurs – nyheder, kalender, video og mærkesager.">
@@ -380,6 +380,42 @@ body.on-sub #page-band{display:block}
 .nl-host{font-size:11px;color:#94A3B8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nl-ic{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:999px;background:#EEF4FF;color:#1E40AF}
 </style>
+<style id="ba-css">
+.ba{display:flex;flex-direction:column;gap:18px}
+.ba-yh{display:flex;align-items:center;gap:10px;margin:0 0 12px;font-size:20px;font-weight:800;color:#0B1B33}
+.ba-bar{display:inline-block;width:22px;height:4px;border-radius:2px;background:#EA6A12}
+.ba-albums{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:700px){.ba-albums{grid-template-columns:1fr 1fr}}
+.ba-album{display:flex;flex-direction:column;text-align:left;background:#fff;border:1px solid #E2E8F0;border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(15,23,42,.05);padding:0;cursor:pointer;transition:box-shadow .15s,border-color .15s}
+.ba-album:hover,.ba-album:focus-visible{border-color:#1E40AF;box-shadow:0 8px 20px -10px rgba(30,64,175,.4);outline:none}
+.ba-cov{display:block;aspect-ratio:16/9;background:#0B1B33;overflow:hidden}
+.ba-cov img{width:100%;height:100%;object-fit:cover;object-position:center 40%;display:block}
+.ba-meta{display:flex;flex-direction:column;gap:3px;padding:14px 16px 16px}
+.ba-t{font-weight:800;font-size:17px;color:#0B1B33}
+.ba-n{font-size:12px;font-weight:700;color:#EA6A12;text-transform:uppercase;letter-spacing:.04em}
+.ba-d{font-size:13px;line-height:1.45;color:#475569}
+.ba-back{align-self:flex-start;background:#fff;border:1px solid #E2E8F0;border-radius:999px;padding:8px 16px;font-weight:700;font-size:13px;color:#1E40AF;cursor:pointer}
+.ba-desc{font-size:14px;line-height:1.55;color:#334155;margin:0}
+.ba-count{font-size:12px;font-weight:700;color:#EA6A12;text-transform:uppercase;letter-spacing:.04em}
+.ba-grid{column-count:2;column-gap:10px}
+@media(min-width:700px){.ba-grid{column-count:3}}
+@media(min-width:1024px){.ba-grid{column-count:4}}
+.ba-th{display:block;width:100%;margin:0 0 10px;padding:0;border:0;background:#E2E8F0;border-radius:12px;overflow:hidden;break-inside:avoid;cursor:zoom-in;box-shadow:0 1px 2px rgba(15,23,42,.08)}
+.ba-th img{display:block;width:100%;height:auto}
+.ba-th:focus-visible{outline:3px solid #1E40AF;outline-offset:2px}
+.ba-lb{position:fixed;inset:0;z-index:9999;background:#050C19;display:flex;align-items:center;justify-content:center}
+.ba-lb[hidden]{display:none}
+.ba-stage{position:absolute;inset:56px 56px 64px;display:flex;align-items:center;justify-content:center}
+.ba-stage img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:6px}
+.ba-x,.ba-nav{position:absolute;background:rgba(255,255,255,.14);color:#fff;border:0;border-radius:999px;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center}
+.ba-x{top:10px;right:10px;width:44px;height:44px;font-size:30px}
+.ba-nav{top:50%;transform:translateY(-50%);width:48px;height:48px;font-size:38px;padding-bottom:4px}
+.ba-prev{left:8px}.ba-next{right:8px}
+.ba-x:hover,.ba-nav:hover{background:rgba(255,255,255,.28)}
+.ba-cap{position:absolute;left:0;right:0;bottom:12px;text-align:center;color:#CBD5E1;font-size:13px;padding:0 64px;display:flex;flex-direction:column;gap:2px}
+.ba-cap #ba-pos{font-weight:700;color:#fff}
+@media(max-width:640px){.ba-stage{inset:56px 0 76px}.ba-nav{width:40px;height:40px;font-size:30px;top:auto;bottom:14px;transform:none}.ba-prev{left:10px}.ba-next{right:10px}.ba-cap{bottom:70px;padding:0 60px}.ba-stage img{border-radius:0}}
+</style>
 </head>
 <body class="text-slate-800 antialiased selection:bg-blue-100 min-h-screen flex flex-col">
 
@@ -465,6 +501,7 @@ body.on-sub #page-band{display:block}
                         <a role="menuitem" class="tm-i" href="https://norddjursvenstre.dk/kredsbestyrelsen.html" target="_blank" rel="noopener">Kredsbestyrelsen Djurs ↗</a>
                         <a role="menuitem" class="tm-i" id="tm-facebook" href="#" target="_blank" rel="noopener">Facebook ↗</a>
                         <a role="menuitem" class="tm-i" id="tm-hjemmeside" href="#" target="_blank" rel="noopener">Hjemmeside ↗</a>
+                        <button role="menuitem" class="tm-i" onclick="topMere(()=>openSubpage('billedarkiv'))">Billedarkiv</button>
                         <button role="menuitem" class="tm-i" onclick="topMere(()=>openSubpage('links'))">Nyttige links</button>
                         <button role="menuitem" class="tm-i" onclick="topMere(()=>openSubpage('kontakt'))">Kontakt</button>
                         <button role="menuitem" class="tm-i" onclick="topMere(()=>openSubpage('gdpr'))">Privatliv / GDPR</button>
@@ -697,6 +734,13 @@ body.on-sub #page-band{display:block}
                     </div>
                     <i data-lucide="external-link" class="w-5 h-5 text-slate-400 group-hover:text-v-blue transition-colors"></i>
                 </a>
+                <button onclick="openSubpage('billedarkiv')" class="w-full px-5 py-4 flex items-center justify-between hover:bg-slate-50 text-left group">
+                    <div class="flex items-center gap-3">
+                        <div class="flex-shrink-0" style="width:40px;height:40px;"><svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true" focusable="false" style="display:block;"><g clip-path="url(#mereClip)"><rect width="48" height="48" fill="url(#mereBlue)"/><path d="M0 42 C12 40 25 31 35 17" stroke="#FFFFFF" stroke-opacity="0.10" stroke-width="7" fill="none"/><path d="M48 19 C42 30 33 41 19 48 L48 48 Z" fill="url(#mereOrg)"/></g><g transform="translate(12 12)" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2.500" y="3.500" width="19" height="17" rx="3"/><circle cx="9" cy="10" r="1.800"/><path d="M21.500 16 16 11 6 20.500"/></g></svg></div>
+                        <span class="font-semibold">Billedarkiv</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 group-hover:text-v-blue transition-colors"></i>
+                </button>
                 <button onclick="openSubpage('links')" class="w-full px-5 py-4 flex items-center justify-between hover:bg-slate-50 text-left group">
                     <div class="flex items-center gap-3">
                         <div class="flex-shrink-0" style="width:40px;height:40px;"><svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true" focusable="false" style="display:block;"><g clip-path="url(#mereClip)"><rect width="48" height="48" fill="url(#mereBlue)"/><path d="M0 42 C12 40 25 31 35 17" stroke="#FFFFFF" stroke-opacity="0.10" stroke-width="7" fill="none"/><path d="M48 19 C42 30 33 41 19 48 L48 48 Z" fill="url(#mereOrg)"/></g><g transform="translate(12 12)" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></g></svg></div>
@@ -1210,6 +1254,31 @@ body.on-sub #page-band{display:block}
         // og sorteres efter den oprindelige dato (ikke som "nye" artikler). En post skjules automatisk, hvis admin senere
         // opretter samme artikel (samme Din Avis-id i linket, eller samme titel).
         // mediaPersons = byrådsmedlemmer, hvis medvirken/omtale er dokumenteret i artiklen (vises under "Omtale i medierne").
+        // RC48.36: Billedarkiv (Mere -> Billedarkiv -> 2026 -> album). Billeder ligger i billedarkiv/<mappe>/ (stor: <præfiks>-NN.jpg, miniature: <præfiks>-NN-t.jpg).
+        // Originalernes billedformat bevares (w/h = faktisk størrelse). Nye album/år tilføjes her.
+        const BILLEDARKIV = [
+            { aar: 2026, albums: [
+                { id: 'landsmoede-2026', titel: 'Landsmøde 2026',
+                  tekst: 'Venstres Landsmøde 2026 i Herning med deltagelse fra Venstre i Syd- og Norddjurs. Billeder fra debatter, taler, fællesskab og landsmødets aktiviteter.',
+                  mappe: 'billedarkiv/2026-landsmoede', praefiks: 'lm2026', omslag: 1,
+                  billeder: [
+                { n: 1, w: 2000, h: 1764, tw: 640, th: 564, alt: "Storskærmen med \"Venstres Landsmøde 2026\" i salen" },
+                { n: 2, w: 1053, h: 1160, tw: 581, th: 640, alt: "Delegaterne rejser sig og synger" },
+                { n: 3, w: 1500, h: 2000, tw: 480, th: 640, alt: "Taler på scenen foran Venstres bagvæg" },
+                { n: 4, w: 2000, h: 1500, tw: 640, th: 480, alt: "Venstres Frihedspris 2026 præsenteres på scenen" },
+                { n: 5, w: 2000, h: 1065, tw: 640, th: 341, alt: "Tre personer på scenen ved overrækkelsen af Frihedsprisen" },
+                { n: 6, w: 2000, h: 1415, tw: 640, th: 453, alt: "Taler ved talerstolen på scenen" },
+                { n: 7, w: 1500, h: 2000, tw: 480, th: 640, alt: "Taler på scenen læser fra sit manuskript" },
+                { n: 8, w: 2000, h: 1230, tw: 640, th: 394, alt: "Debatpanel på scenen: \"Hvordan får vi den gode folkeskole tilbage?\"" },
+                { n: 9, w: 2000, h: 1287, tw: 640, th: 412, alt: "Taler ved talerstolen på scenen" },
+                { n: 10, w: 1500, h: 2000, tw: 480, th: 640, alt: "Taler i lilla ved talerstolen, delegater i forgrunden" },
+                { n: 11, w: 1792, h: 2000, tw: 573, th: 640, alt: "Taler ved talerstolen med teleprompter" },
+                { n: 12, w: 2000, h: 1500, tw: 640, th: 480, alt: "Landsmødesalen fuld af delegater" },
+                { n: 13, w: 2000, h: 1140, tw: 640, th: 365, alt: "Tre Venstre-bannere på murstensvæggen i salen" },
+                { n: 14, w: 1152, h: 1536, tw: 480, th: 640, alt: "Kasper Bjerregaard på talerstolen ved Landsmødet" }
+                  ] }
+            ] }
+        ];
         // RC48.35: Nyttige links (Mere -> Nyttige links). Alle eksterne links åbner i ny fane. Én gruppe pr. objekt; ingen dubletter.
         const NYTTIGE_LINKS = [
             { gruppe: 'Venstre og organisationen', links: [
@@ -1665,6 +1734,47 @@ body.on-sub #page-band{display:block}
             if (el) { el.classList.remove('text-slate-400'); el.classList.add('text-v-blue', 'font-semibold'); }
         }
 
+        // ---- Billedarkiv: visning + lysboks (RC48.36) ----
+        const BA = { album: null, idx: 0, open: false, tx: null };
+        function baSrc(a, b, thumb) { return a.mappe + '/' + a.praefiks + '-' + String(b.n).padStart(2, '0') + (thumb ? '-t' : '') + '.jpg'; }
+        function baFind(id) { for (const y of BILLEDARKIV) for (const a of y.albums) if (a.id === id) return a; return null; }
+        function baRender() {
+            const a = BA.album ? baFind(BA.album) : null;
+            if (a) {
+                return `<div class="ba"><button type="button" class="ba-back" onclick="baBack()">&larr; Billedarkiv</button>
+                    <p class="ba-desc">${moedeEsc(a.tekst)}</p>
+                    <div class="ba-count">${a.billeder.length} billeder</div>
+                    <div class="ba-grid">${a.billeder.map((b, i) => `<button type="button" class="ba-th" onclick="baOpen(${i})" aria-label="Åbn billede ${i + 1} af ${a.billeder.length}: ${moedeEsc(b.alt)}"><img src="${moedeEsc(baSrc(a, b, true))}" width="${b.tw}" height="${b.th}" alt="${moedeEsc(b.alt)}" loading="${i < 6 ? 'eager' : 'lazy'}" decoding="async" onerror="this.closest('.ba-th').style.display='none'"></button>`).join('')}</div></div>`;
+            }
+            return `<div class="ba">${BILLEDARKIV.map(y => `<section class="ba-year"><h2 class="ba-yh"><span class="ba-bar"></span>${moedeEsc(y.aar)}</h2><div class="ba-albums">${y.albums.map(al => {
+                const cov = al.billeder.find(b => b.n === al.omslag) || al.billeder[0];
+                return `<button type="button" class="ba-album" onclick="baShowAlbum('${moedeEsc(al.id)}')"><span class="ba-cov"><img src="${moedeEsc(baSrc(al, cov, true))}" alt="" loading="eager" onerror="this.style.display='none'"></span><span class="ba-meta"><span class="ba-t">${moedeEsc(al.titel)}</span><span class="ba-n">${al.billeder.length} billeder</span><span class="ba-d">${moedeEsc(al.tekst)}</span></span></button>`;
+            }).join('')}</div></section>`).join('')}</div>`;
+        }
+        function baSetTitle() { const a = BA.album ? baFind(BA.album) : null; const h = document.getElementById('page-band-title'); if (h) h.textContent = a ? a.titel : 'Billedarkiv'; }
+        function baShowAlbum(id) { BA.album = id; document.getElementById('subpage-content').innerHTML = baRender(); baSetTitle(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        function baBack() { BA.album = null; document.getElementById('subpage-content').innerHTML = baRender(); baSetTitle(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        function baEnsureBox() {
+            let box = document.getElementById('ba-lb'); if (box) return box;
+            box = document.createElement('div'); box.id = 'ba-lb'; box.className = 'ba-lb'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-label', 'Billedvisning'); box.hidden = true;
+            box.innerHTML = '<button type="button" class="ba-x" aria-label="Luk billedvisning">&times;</button><button type="button" class="ba-nav ba-prev" aria-label="Forrige billede">&#8249;</button><div class="ba-stage"><img id="ba-img" alt=""></div><button type="button" class="ba-nav ba-next" aria-label="Næste billede">&#8250;</button><div class="ba-cap"><span id="ba-pos"></span><span id="ba-alt"></span></div>';
+            document.body.appendChild(box);
+            box.querySelector('.ba-x').onclick = baClose; box.querySelector('.ba-prev').onclick = () => baStep(-1); box.querySelector('.ba-next').onclick = () => baStep(1);
+            box.addEventListener('click', e => { if (e.target === box || e.target.classList.contains('ba-stage')) baClose(); });
+            box.addEventListener('touchstart', e => { BA.tx = e.touches[0].clientX; }, { passive: true });
+            box.addEventListener('touchend', e => { if (BA.tx == null) return; const dx = e.changedTouches[0].clientX - BA.tx; BA.tx = null; if (Math.abs(dx) > 50) baStep(dx < 0 ? 1 : -1); }, { passive: true });
+            document.addEventListener('keydown', e => { if (!BA.open) return; if (e.key === 'Escape') baClose(); else if (e.key === 'ArrowLeft') baStep(-1); else if (e.key === 'ArrowRight') baStep(1); });
+            return box;
+        }
+        function baShow() {
+            const a = baFind(BA.album); if (!a) return; const b = a.billeder[BA.idx]; const img = document.getElementById('ba-img');
+            img.src = baSrc(a, b, false); img.alt = b.alt; img.width = b.w; img.height = b.h;
+            document.getElementById('ba-pos').textContent = (BA.idx + 1) + ' / ' + a.billeder.length; document.getElementById('ba-alt').textContent = b.alt;
+            [1, -1].forEach(d => { const n = a.billeder[(BA.idx + d + a.billeder.length) % a.billeder.length]; const pre = new Image(); pre.src = baSrc(a, n, false); });
+        }
+        function baOpen(i) { BA.idx = i; const box = baEnsureBox(); box.hidden = false; BA.open = true; document.body.style.overflow = 'hidden'; baShow(); box.querySelector('.ba-x').focus(); }
+        function baStep(d) { const a = baFind(BA.album); if (!a) return; BA.idx = (BA.idx + d + a.billeder.length) % a.billeder.length; baShow(); }
+        function baClose() { const box = document.getElementById('ba-lb'); if (box) box.hidden = true; BA.open = false; document.body.style.overflow = ''; }
         function openSubpage(type) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById('admin-module-container').classList.add('hidden');            const subpage = document.getElementById('subpage-container');
@@ -1800,6 +1910,8 @@ body.on-sub #page-band{display:block}
                         ${liU ? `<a class="kc-row" href="${moedeEsc(liU)}" target="_blank" rel="noopener">${ico('linkedin')}<span><span class="kc-l">LinkedIn</span><span class="kc-v">LinkedIn</span></span></a>` : ''}
                     </div>
                 `;
+            } else if (type === 'billedarkiv') {
+                BA.album = null; html = baRender();
             } else if (type === 'links') {
                 const nlIco = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>';
                 const okU = u => /^https:\/\//i.test(String(u || '')) ? u : '';
@@ -4293,7 +4405,7 @@ var fu=document.querySelector('#tab-forside > .rounded-3xl.overflow-hidden.md\\:
 </script>
 <script id="nav-js">
 (function(){
-  var TITLES={maerkesager:'Mærkesager',moedmenneskene:'Mød menneskerne',byraadet:'Byrådet',djursland:'Venstre Djursland',bestyrelse:'Bestyrelsen',vu:'Venstre Ungdom',medlem:'Bliv medlem',kontakt:'Kontakt',links:'Nyttige links',gdpr:'Privatliv / GDPR'};
+  var TITLES={maerkesager:'Mærkesager',moedmenneskene:'Mød menneskerne',byraadet:'Byrådet',djursland:'Venstre Djursland',bestyrelse:'Bestyrelsen',vu:'Venstre Ungdom',medlem:'Bliv medlem',kontakt:'Kontakt',links:'Nyttige links',billedarkiv:'Billedarkiv',gdpr:'Privatliv / GDPR'};
   var TABT={nyheder:'Nyheder',kalender:'Kalender',video:'Video',mere:'Mere',admin:'Administration'};
   var curSub=null;
   function $(i){return document.getElementById(i)}
