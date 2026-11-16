@@ -3,7 +3,7 @@
 <html lang="da">
 <head>
     <meta charset="UTF-8">
-    <meta name="app-version" content="RC48.34 (2026-11-17)">
+    <meta name="app-version" content="RC48.35 (2026-11-17)">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Venstre Syddjurs</title>
     <meta name="description" content="Officiel app for Venstre Syddjurs – nyheder, kalender, video og mærkesager.">
@@ -365,7 +365,22 @@ body.on-sub #page-band{display:block}
 .kc-ic{width:36px;height:36px;border-radius:50%;background:#EFF6FF;color:#1D4ED8;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
 .kc-l{font-size:11px;color:#64748B;font-weight:600;text-transform:uppercase;letter-spacing:.05em;display:block}
 .kc-v{font-size:15px;font-weight:700;color:#0B1B33;word-break:break-word}
-</style></head>
+</style><style id="nl-css">
+.nl{display:flex;flex-direction:column;gap:26px}
+.nl-h{display:flex;align-items:center;gap:10px;margin:0 0 12px;font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#0B1B33}
+.nl-bar{display:inline-block;width:22px;height:4px;border-radius:2px;background:#EA6A12}
+.nl-grid{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:700px){.nl-grid{grid-template-columns:1fr 1fr}}
+@media(min-width:1024px){.nl-grid{grid-template-columns:1fr 1fr 1fr}}
+.nl-card{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px;padding:12px 16px;background:#fff;border:1px solid #E2E8F0;border-radius:14px;text-decoration:none;color:inherit;box-shadow:0 1px 2px rgba(15,23,42,.04);transition:border-color .15s,box-shadow .15s}
+.nl-card:hover,.nl-card:focus-visible{border-color:#1E40AF;box-shadow:0 6px 16px -8px rgba(30,64,175,.35);outline:none}
+.nl-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.nl-navn{font-weight:700;font-size:15px;line-height:1.25;color:#0B1B33}
+.nl-besk{font-size:12.5px;line-height:1.35;color:#475569}
+.nl-host{font-size:11px;color:#94A3B8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nl-ic{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:999px;background:#EEF4FF;color:#1E40AF}
+</style>
+</head>
 <body class="text-slate-800 antialiased selection:bg-blue-100 min-h-screen flex flex-col">
 
     <!-- MERE-IKONER: fælles blå/orange cirkelbase (symbol) — hvert menupunkt har sit eget hvide symbol ovenpå. -->
@@ -450,6 +465,7 @@ body.on-sub #page-band{display:block}
                         <a role="menuitem" class="tm-i" href="https://norddjursvenstre.dk/kredsbestyrelsen.html" target="_blank" rel="noopener">Kredsbestyrelsen Djurs ↗</a>
                         <a role="menuitem" class="tm-i" id="tm-facebook" href="#" target="_blank" rel="noopener">Facebook ↗</a>
                         <a role="menuitem" class="tm-i" id="tm-hjemmeside" href="#" target="_blank" rel="noopener">Hjemmeside ↗</a>
+                        <button role="menuitem" class="tm-i" onclick="topMere(()=>openSubpage('links'))">Nyttige links</button>
                         <button role="menuitem" class="tm-i" onclick="topMere(()=>openSubpage('kontakt'))">Kontakt</button>
                         <button role="menuitem" class="tm-i" onclick="topMere(()=>openSubpage('gdpr'))">Privatliv / GDPR</button>
                         <button role="menuitem" class="tm-i" onclick="topMere(()=>switchTab('mere'))" style="border-top:1px solid #E2E8F0;margin-top:4px;color:#64748B;">Se hele Mere-siden →</button>
@@ -681,6 +697,13 @@ body.on-sub #page-band{display:block}
                     </div>
                     <i data-lucide="external-link" class="w-5 h-5 text-slate-400 group-hover:text-v-blue transition-colors"></i>
                 </a>
+                <button onclick="openSubpage('links')" class="w-full px-5 py-4 flex items-center justify-between hover:bg-slate-50 text-left group">
+                    <div class="flex items-center gap-3">
+                        <div class="flex-shrink-0" style="width:40px;height:40px;"><svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true" focusable="false" style="display:block;"><g clip-path="url(#mereClip)"><rect width="48" height="48" fill="url(#mereBlue)"/><path d="M0 42 C12 40 25 31 35 17" stroke="#FFFFFF" stroke-opacity="0.10" stroke-width="7" fill="none"/><path d="M48 19 C42 30 33 41 19 48 L48 48 Z" fill="url(#mereOrg)"/></g><g transform="translate(12 12)" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></g></svg></div>
+                        <span class="font-semibold">Nyttige links</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 group-hover:text-v-blue transition-colors"></i>
+                </button>
                 <button onclick="openSubpage('kontakt')" class="w-full px-5 py-4 flex items-center justify-between hover:bg-slate-50 text-left group">
                     <div class="flex items-center gap-3">
                         <div class="flex-shrink-0" style="width:40px;height:40px;"><svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true" focusable="false" style="display:block;"><g clip-path="url(#mereClip)"><rect width="48" height="48" fill="url(#mereBlue)"/><path d="M0 42 C12 40 25 31 35 17" stroke="#FFFFFF" stroke-opacity="0.10" stroke-width="7" fill="none"/><path d="M48 19 C42 30 33 41 19 48 L48 48 Z" fill="url(#mereOrg)"/></g><rect x="11.500" y="15" width="25" height="18" rx="3.500" stroke="#fff" stroke-width="2.800" fill="none"/><path d="M13 17.500l11 8.200 11-8.200" stroke="#fff" stroke-width="2.800" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
@@ -1187,6 +1210,27 @@ body.on-sub #page-band{display:block}
         // og sorteres efter den oprindelige dato (ikke som "nye" artikler). En post skjules automatisk, hvis admin senere
         // opretter samme artikel (samme Din Avis-id i linket, eller samme titel).
         // mediaPersons = byrådsmedlemmer, hvis medvirken/omtale er dokumenteret i artiklen (vises under "Omtale i medierne").
+        // RC48.35: Nyttige links (Mere -> Nyttige links). Alle eksterne links åbner i ny fane. Én gruppe pr. objekt; ingen dubletter.
+        const NYTTIGE_LINKS = [
+            { gruppe: 'Venstre og organisationen', links: [
+                { navn: 'Venstre', tekst: 'Partiets landsdækkende hjemmeside', url: 'https://www.venstre.dk/' },
+                { navn: 'Venstre Syddjurs', tekst: 'Den lokale forenings hjemmeside', url: 'https://syddjurs.venstre.dk/' },
+                { navn: 'Venstre Norddjurs', tekst: 'Venstre i Norddjurs Kommune', url: 'https://norddjursvenstre.dk/' },
+                { navn: 'Venstres Ungdom', tekst: 'Venstres ungdomsorganisation', url: 'https://vu.dk/' },
+                { navn: 'Venstres politik', tekst: 'Overblik over Venstres politik', url: 'https://www.venstre.dk/politik' },
+                { navn: 'Venstres politikere', tekst: 'Politikere, organisationsfolk og ansatte', url: 'https://www.venstre.dk/personer' },
+                { navn: 'Venstre i Europa-Parlamentet', tekst: 'Venstres medlemmer af Europa-Parlamentet', url: 'https://www.venstre.dk/personer/europa-parlamentet' },
+                { navn: 'Venstre lokalt', tekst: 'Venstres lokalforeninger i hele landet', url: 'https://www.venstre.dk/partiet/venstre-lokalt' }
+            ] },
+            { gruppe: 'Folkestyre og EU', links: [
+                { navn: 'Folketinget', tekst: 'Folketingets officielle hjemmeside', url: 'https://www.ft.dk/' },
+                { navn: 'Den Europæiske Union', tekst: 'EU\'s officielle hjemmeside på dansk', url: 'https://european-union.europa.eu/index_da' }
+            ] },
+            { gruppe: 'Lokale myndigheder', links: [
+                { navn: 'Syddjurs Kommune', tekst: 'Kommunens officielle hjemmeside', url: 'https://www.syddjurs.dk/' },
+                { navn: 'Norddjurs Kommune', tekst: 'Kommunens officielle hjemmeside', url: 'https://www.norddjurs.dk/' }
+            ] }
+        ];
         // RC48.32: Landsmøde-medier. Billederne (TV-skærmbillede + pressefoto) og videoen (optaget fra News' tv-dækning) er IKKE godkendt til
         // offentliggørelse (ophavsret). Slå først til, når tilladelse foreligger OG filerne ligger i samme mappe som index.html.
         const LANDSMOEDE_MEDIA = { billeder: true, video: true };
@@ -1756,6 +1800,17 @@ body.on-sub #page-band{display:block}
                         ${liU ? `<a class="kc-row" href="${moedeEsc(liU)}" target="_blank" rel="noopener">${ico('linkedin')}<span><span class="kc-l">LinkedIn</span><span class="kc-v">LinkedIn</span></span></a>` : ''}
                     </div>
                 `;
+            } else if (type === 'links') {
+                const nlIco = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>';
+                const okU = u => /^https:\/\//i.test(String(u || '')) ? u : '';
+                const seenU = new Set();
+                html = '<div class="nl">' + NYTTIGE_LINKS.map(g => {
+                    const rows = (g.links || []).filter(l => { const u = okU(l.url); if (!u || seenU.has(u)) return false; seenU.add(u); return true; }).map(l => {
+                        const host = String(l.url).replace(/^https:\/\/(www\.)?/, '').replace(/\/$/, '');
+                        return `<a class="nl-card" href="${moedeEsc(l.url)}" target="_blank" rel="noopener noreferrer"><span class="nl-txt"><span class="nl-navn">${moedeEsc(l.navn)}</span><span class="nl-besk">${moedeEsc(l.tekst || '')}</span><span class="nl-host">${moedeEsc(host)}</span></span><span class="nl-ic">${nlIco}</span></a>`;
+                    }).join('');
+                    return rows ? `<section class="nl-gr"><h2 class="nl-h"><span class="nl-bar"></span>${moedeEsc(g.gruppe)}</h2><div class="nl-grid">${rows}</div></section>` : '';
+                }).join('') + '</div>';
             } else if (type === 'gdpr') {
                 html = `
                     <h2 class="text-xl font-bold text-v-blue flex items-center gap-2"><i data-lucide="shield-check"></i> Privatliv & GDPR</h2>
@@ -4238,7 +4293,7 @@ var fu=document.querySelector('#tab-forside > .rounded-3xl.overflow-hidden.md\\:
 </script>
 <script id="nav-js">
 (function(){
-  var TITLES={maerkesager:'Mærkesager',moedmenneskene:'Mød menneskerne',byraadet:'Byrådet',djursland:'Venstre Djursland',bestyrelse:'Bestyrelsen',vu:'Venstre Ungdom',medlem:'Bliv medlem',kontakt:'Kontakt',gdpr:'Privatliv / GDPR'};
+  var TITLES={maerkesager:'Mærkesager',moedmenneskene:'Mød menneskerne',byraadet:'Byrådet',djursland:'Venstre Djursland',bestyrelse:'Bestyrelsen',vu:'Venstre Ungdom',medlem:'Bliv medlem',kontakt:'Kontakt',links:'Nyttige links',gdpr:'Privatliv / GDPR'};
   var TABT={nyheder:'Nyheder',kalender:'Kalender',video:'Video',mere:'Mere',admin:'Administration'};
   var curSub=null;
   function $(i){return document.getElementById(i)}
