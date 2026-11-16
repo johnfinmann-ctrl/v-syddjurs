@@ -3,7 +3,7 @@
 <html lang="da">
 <head>
     <meta charset="UTF-8">
-    <meta name="app-version" content="RC48.38 (2026-11-17)">
+    <meta name="app-version" content="RC48.39 (2026-11-17)">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Venstre Syddjurs</title>
     <meta name="description" content="Officiel app for Venstre Syddjurs – nyheder, kalender, video og mærkesager.">
@@ -1270,6 +1270,7 @@ body.on-sub #page-band{display:block}
                 { id: 'landsmoede-2026', titel: 'Landsmøde 2026',
                   tekst: 'Venstres Landsmøde 2026 i Herning med deltagelse fra Venstre i Syd- og Norddjurs. Billeder fra debatter, taler, fællesskab og landsmødets aktiviteter.',
                   overskrift: 'Venstres Landsmøde 2026', undertitel: 'Herning, november 2026',
+              arkiv: { titel: 'Officielle billeder fra Venstre', tekst: 'Se flere billeder fra Venstres arrangementer og landsmøder i Venstres officielle billedarkiv.', knap: 'Se Venstres billedarkiv', url: 'https://public.skyfish.com/p/venstre/all-files' },
               tale: { titel: 'Troels Lund Poulsens landsmødetale 2026', tekst: 'Læs Troels Lund Poulsens tale fra Venstres Landsmøde 2026 i Herning.', knap: 'Læs landsmødetalen', url: 'https://www.venstre.dk/politik/taler/troels-lund-poulsens-tale-til-venstres-landsmode-2026' },
               mappe: 'billedarkiv/2026-landsmoede', praefiks: 'lm2026', omslag: 1,
                   billeder: [
@@ -1757,7 +1758,8 @@ body.on-sub #page-band{display:block}
                     <section class="ba-hero"><span class="ba-bar"></span><h2 class="ba-hero-h">${moedeEsc(a.overskrift || a.titel)}</h2>${a.undertitel ? `<div class="ba-sub">${moedeEsc(a.undertitel)}</div>` : ''}<p class="ba-desc">${moedeEsc(a.tekst)}</p></section>
                     ${a.tale ? `<section class="ba-tale" aria-labelledby="ba-tale-h"><span class="ba-bar"></span><h2 id="ba-tale-h" class="ba-tale-h">${moedeEsc(a.tale.titel)}</h2><p class="ba-tale-p">${moedeEsc(a.tale.tekst)}</p><a class="ba-tale-btn" href="${moedeEsc(a.tale.url)}" target="_blank" rel="noopener noreferrer">${moedeEsc(a.tale.knap)} <span aria-hidden="true">&rarr;</span></a></section>` : ''}
                     <h2 class="ba-gh">Billeder fra landsmødet <span class="ba-count">${a.billeder.length} billeder</span></h2>
-                    <div class="ba-grid">${a.billeder.map((b, i) => `<button type="button" class="ba-th" onclick="baOpen(${i})" aria-label="Åbn billede ${i + 1} af ${a.billeder.length}: ${moedeEsc(b.alt)}"><img src="${moedeEsc(baSrc(a, b, true))}" srcset="${moedeEsc(baSrc(a, b, true))} ${b.tw}w, ${moedeEsc(baSrc(a, b, false))} ${b.w}w" sizes="(min-width:1024px) 30vw, (min-width:640px) 45vw, 92vw" width="${b.tw}" height="${b.th}" alt="${moedeEsc(b.alt)}" loading="${i < 4 ? 'eager' : 'lazy'}" decoding="async" onerror="this.closest('.ba-th').style.display='none'"></button>`).join('')}</div></div>`;
+                    <div class="ba-grid">${a.billeder.map((b, i) => `<button type="button" class="ba-th" onclick="baOpen(${i})" aria-label="Åbn billede ${i + 1} af ${a.billeder.length}: ${moedeEsc(b.alt)}"><img src="${moedeEsc(baSrc(a, b, true))}" srcset="${moedeEsc(baSrc(a, b, true))} ${b.tw}w, ${moedeEsc(baSrc(a, b, false))} ${b.w}w" sizes="(min-width:1024px) 30vw, (min-width:640px) 45vw, 92vw" width="${b.tw}" height="${b.th}" alt="${moedeEsc(b.alt)}" loading="${i < 4 ? 'eager' : 'lazy'}" decoding="async" onerror="this.closest('.ba-th').style.display='none'"></button>`).join('')}</div>
+                    ${a.arkiv ? `<section class="ba-tale" aria-labelledby="ba-arkiv-h"><span class="ba-bar"></span><h2 id="ba-arkiv-h" class="ba-tale-h">${moedeEsc(a.arkiv.titel)}</h2><p class="ba-tale-p">${moedeEsc(a.arkiv.tekst)}</p><a class="ba-tale-btn" href="${moedeEsc(a.arkiv.url)}" target="_blank" rel="noopener noreferrer">${moedeEsc(a.arkiv.knap)} <span aria-hidden="true">&rarr;</span></a></section>` : ''}</div>`;
             }
             return `<div class="ba">${BILLEDARKIV.map(y => `<section class="ba-year"><h2 class="ba-yh"><span class="ba-bar"></span>${moedeEsc(y.aar)}</h2><div class="ba-albums">${y.albums.map(al => {
                 const cov = al.billeder.find(b => b.n === al.omslag) || al.billeder[0];
