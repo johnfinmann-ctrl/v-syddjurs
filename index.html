@@ -3,7 +3,7 @@
 <html lang="da">
 <head>
     <meta charset="UTF-8">
-    <meta name="app-version" content="RC48.36 (2026-11-17)">
+    <meta name="app-version" content="RC48.37 (2026-11-17)">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Venstre Syddjurs</title>
     <meta name="description" content="Officiel app for Venstre Syddjurs – nyheder, kalender, video og mærkesager.">
@@ -395,6 +395,13 @@ body.on-sub #page-band{display:block}
 .ba-n{font-size:12px;font-weight:700;color:#EA6A12;text-transform:uppercase;letter-spacing:.04em}
 .ba-d{font-size:13px;line-height:1.45;color:#475569}
 .ba-back{align-self:flex-start;background:#fff;border:1px solid #E2E8F0;border-radius:999px;padding:8px 16px;font-weight:700;font-size:13px;color:#1E40AF;cursor:pointer}
+.ba-tale{background:#fff;border:1px solid #E2E8F0;border-left:4px solid #EA6A12;border-radius:16px;padding:18px 18px 20px;box-shadow:0 1px 2px rgba(15,23,42,.05);display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.ba-tale-h{margin:0;font-size:20px;line-height:1.25;font-weight:800;color:#0B1B33}
+.ba-tale-p{margin:0;font-size:14px;line-height:1.55;color:#334155}
+.ba-tale-btn{display:inline-flex;align-items:center;gap:8px;margin-top:6px;background:#EA6A12;color:#fff;font-weight:800;font-size:15px;padding:12px 20px;border-radius:999px;text-decoration:none;min-height:44px}
+.ba-tale-btn:hover,.ba-tale-btn:focus-visible{background:#C9560A;outline:none;box-shadow:0 6px 16px -8px rgba(234,106,18,.7)}
+.ba-tale-l2{font-weight:700;font-size:14px;color:#1E40AF;text-decoration:none;padding:8px 0;min-height:36px;display:inline-flex;align-items:center;gap:6px}
+.ba-tale-l2:hover,.ba-tale-l2:focus-visible{text-decoration:underline;outline:none}
 .ba-desc{font-size:14px;line-height:1.55;color:#334155;margin:0}
 .ba-count{font-size:12px;font-weight:700;color:#EA6A12;text-transform:uppercase;letter-spacing:.04em}
 .ba-grid{column-count:2;column-gap:10px}
@@ -1260,7 +1267,9 @@ body.on-sub #page-band{display:block}
             { aar: 2026, albums: [
                 { id: 'landsmoede-2026', titel: 'Landsmøde 2026',
                   tekst: 'Venstres Landsmøde 2026 i Herning med deltagelse fra Venstre i Syd- og Norddjurs. Billeder fra debatter, taler, fællesskab og landsmødets aktiviteter.',
-                  mappe: 'billedarkiv/2026-landsmoede', praefiks: 'lm2026', omslag: 1,
+                  tale: { titel: 'Troels Lund Poulsens tale på Venstres Landsmøde 2026', tekst: 'Læs Troels Lund Poulsens tale fra Venstres Landsmøde 2026 i Herning.', knap: 'Læs hele landsmødetalen', url: 'https://www.venstre.dk/politik/taler/troels-lund-poulsens-tale-til-venstres-landsmode-2026',
+                      link2: { knap: 'Vi er Venstre', url: 'https://www.venstre.dk/partiet/vi-er-venstre' } },
+              mappe: 'billedarkiv/2026-landsmoede', praefiks: 'lm2026', omslag: 1,
                   billeder: [
                 { n: 1, w: 2000, h: 1764, tw: 640, th: 564, alt: "Storskærmen med \"Venstres Landsmøde 2026\" i salen" },
                 { n: 2, w: 1053, h: 1160, tw: 581, th: 640, alt: "Delegaterne rejser sig og synger" },
@@ -1275,7 +1284,8 @@ body.on-sub #page-band{display:block}
                 { n: 11, w: 1792, h: 2000, tw: 573, th: 640, alt: "Taler ved talerstolen med teleprompter" },
                 { n: 12, w: 2000, h: 1500, tw: 640, th: 480, alt: "Landsmødesalen fuld af delegater" },
                 { n: 13, w: 2000, h: 1140, tw: 640, th: 365, alt: "Tre Venstre-bannere på murstensvæggen i salen" },
-                { n: 14, w: 1152, h: 1536, tw: 480, th: 640, alt: "Kasper Bjerregaard på talerstolen ved Landsmødet" }
+                { n: 14, w: 1152, h: 1536, tw: 480, th: 640, alt: "Kasper Bjerregaard på talerstolen ved Landsmødet" },
+                { n: 15, w: 1448, h: 1086, tw: 640, th: 480, alt: "AI-illustration »Snigerskatten«: fire karikerede figurer med pengesække foran et slot om natten" }
                   ] }
             ] }
         ];
@@ -1742,6 +1752,7 @@ body.on-sub #page-band{display:block}
             const a = BA.album ? baFind(BA.album) : null;
             if (a) {
                 return `<div class="ba"><button type="button" class="ba-back" onclick="baBack()">&larr; Billedarkiv</button>
+                    ${a.tale ? `<section class="ba-tale" aria-labelledby="ba-tale-h"><span class="ba-bar"></span><h2 id="ba-tale-h" class="ba-tale-h">${moedeEsc(a.tale.titel)}</h2><p class="ba-tale-p">${moedeEsc(a.tale.tekst)}</p><a class="ba-tale-btn" href="${moedeEsc(a.tale.url)}" target="_blank" rel="noopener noreferrer">${moedeEsc(a.tale.knap)} <span aria-hidden="true">&rarr;</span></a>${a.tale.link2 ? `<a class="ba-tale-l2" href="${moedeEsc(a.tale.link2.url)}" target="_blank" rel="noopener noreferrer">${moedeEsc(a.tale.link2.knap)} på venstre.dk <span aria-hidden="true">&rarr;</span></a>` : ''}</section>` : ''}
                     <p class="ba-desc">${moedeEsc(a.tekst)}</p>
                     <div class="ba-count">${a.billeder.length} billeder</div>
                     <div class="ba-grid">${a.billeder.map((b, i) => `<button type="button" class="ba-th" onclick="baOpen(${i})" aria-label="Åbn billede ${i + 1} af ${a.billeder.length}: ${moedeEsc(b.alt)}"><img src="${moedeEsc(baSrc(a, b, true))}" width="${b.tw}" height="${b.th}" alt="${moedeEsc(b.alt)}" loading="${i < 6 ? 'eager' : 'lazy'}" decoding="async" onerror="this.closest('.ba-th').style.display='none'"></button>`).join('')}</div></div>`;
