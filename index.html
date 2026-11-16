@@ -3,7 +3,7 @@
 <html lang="da">
 <head>
     <meta charset="UTF-8">
-    <meta name="app-version" content="RC48.37 (2026-11-17)">
+    <meta name="app-version" content="RC48.38 (2026-11-17)">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Venstre Syddjurs</title>
     <meta name="description" content="Officiel app for Venstre Syddjurs – nyheder, kalender, video og mærkesager.">
@@ -400,14 +400,16 @@ body.on-sub #page-band{display:block}
 .ba-tale-p{margin:0;font-size:14px;line-height:1.55;color:#334155}
 .ba-tale-btn{display:inline-flex;align-items:center;gap:8px;margin-top:6px;background:#EA6A12;color:#fff;font-weight:800;font-size:15px;padding:12px 20px;border-radius:999px;text-decoration:none;min-height:44px}
 .ba-tale-btn:hover,.ba-tale-btn:focus-visible{background:#C9560A;outline:none;box-shadow:0 6px 16px -8px rgba(234,106,18,.7)}
-.ba-tale-l2{font-weight:700;font-size:14px;color:#1E40AF;text-decoration:none;padding:8px 0;min-height:36px;display:inline-flex;align-items:center;gap:6px}
-.ba-tale-l2:hover,.ba-tale-l2:focus-visible{text-decoration:underline;outline:none}
 .ba-desc{font-size:14px;line-height:1.55;color:#334155;margin:0}
 .ba-count{font-size:12px;font-weight:700;color:#EA6A12;text-transform:uppercase;letter-spacing:.04em}
-.ba-grid{column-count:2;column-gap:10px}
-@media(min-width:700px){.ba-grid{column-count:3}}
-@media(min-width:1024px){.ba-grid{column-count:4}}
-.ba-th{display:block;width:100%;margin:0 0 10px;padding:0;border:0;background:#E2E8F0;border-radius:12px;overflow:hidden;break-inside:avoid;cursor:zoom-in;box-shadow:0 1px 2px rgba(15,23,42,.08)}
+.ba-grid{column-count:1;column-gap:14px}
+@media(min-width:640px){.ba-grid{column-count:2}}
+@media(min-width:1024px){.ba-grid{column-count:3}}
+.ba-hero{display:flex;flex-direction:column;gap:6px}
+.ba-hero-h{margin:0;font-size:26px;line-height:1.15;font-weight:800;color:#0B1B33}
+.ba-sub{font-size:15px;font-weight:700;color:#1E40AF}
+.ba-gh{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin:6px 0 0;font-size:20px;font-weight:800;color:#0B1B33}
+.ba-th{display:block;width:100%;margin:0 0 14px;padding:0;border:0;background:#E2E8F0;border-radius:12px;overflow:hidden;break-inside:avoid;cursor:zoom-in;box-shadow:0 1px 2px rgba(15,23,42,.08)}
 .ba-th img{display:block;width:100%;height:auto}
 .ba-th:focus-visible{outline:3px solid #1E40AF;outline-offset:2px}
 .ba-lb{position:fixed;inset:0;z-index:9999;background:#050C19;display:flex;align-items:center;justify-content:center}
@@ -508,7 +510,7 @@ body.on-sub #page-band{display:block}
                         <a role="menuitem" class="tm-i" href="https://norddjursvenstre.dk/kredsbestyrelsen.html" target="_blank" rel="noopener">Kredsbestyrelsen Djurs ↗</a>
                         <a role="menuitem" class="tm-i" id="tm-facebook" href="#" target="_blank" rel="noopener">Facebook ↗</a>
                         <a role="menuitem" class="tm-i" id="tm-hjemmeside" href="#" target="_blank" rel="noopener">Hjemmeside ↗</a>
-                        <button role="menuitem" class="tm-i" onclick="topMere(()=>openSubpage('billedarkiv'))">Billedarkiv</button>
+                        <button role="menuitem" class="tm-i" onclick="topMere(()=>openSubpage('billedarkiv'))">Landsmøde 2026</button>
                         <button role="menuitem" class="tm-i" onclick="topMere(()=>openSubpage('links'))">Nyttige links</button>
                         <button role="menuitem" class="tm-i" onclick="topMere(()=>openSubpage('kontakt'))">Kontakt</button>
                         <button role="menuitem" class="tm-i" onclick="topMere(()=>openSubpage('gdpr'))">Privatliv / GDPR</button>
@@ -744,7 +746,7 @@ body.on-sub #page-band{display:block}
                 <button onclick="openSubpage('billedarkiv')" class="w-full px-5 py-4 flex items-center justify-between hover:bg-slate-50 text-left group">
                     <div class="flex items-center gap-3">
                         <div class="flex-shrink-0" style="width:40px;height:40px;"><svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true" focusable="false" style="display:block;"><g clip-path="url(#mereClip)"><rect width="48" height="48" fill="url(#mereBlue)"/><path d="M0 42 C12 40 25 31 35 17" stroke="#FFFFFF" stroke-opacity="0.10" stroke-width="7" fill="none"/><path d="M48 19 C42 30 33 41 19 48 L48 48 Z" fill="url(#mereOrg)"/></g><g transform="translate(12 12)" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2.500" y="3.500" width="19" height="17" rx="3"/><circle cx="9" cy="10" r="1.800"/><path d="M21.500 16 16 11 6 20.500"/></g></svg></div>
-                        <span class="font-semibold">Billedarkiv</span>
+                        <span class="font-semibold">Landsmøde 2026</span>
                     </div>
                     <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 group-hover:text-v-blue transition-colors"></i>
                 </button>
@@ -1267,8 +1269,8 @@ body.on-sub #page-band{display:block}
             { aar: 2026, albums: [
                 { id: 'landsmoede-2026', titel: 'Landsmøde 2026',
                   tekst: 'Venstres Landsmøde 2026 i Herning med deltagelse fra Venstre i Syd- og Norddjurs. Billeder fra debatter, taler, fællesskab og landsmødets aktiviteter.',
-                  tale: { titel: 'Troels Lund Poulsens tale på Venstres Landsmøde 2026', tekst: 'Læs Troels Lund Poulsens tale fra Venstres Landsmøde 2026 i Herning.', knap: 'Læs hele landsmødetalen', url: 'https://www.venstre.dk/politik/taler/troels-lund-poulsens-tale-til-venstres-landsmode-2026',
-                      link2: { knap: 'Vi er Venstre', url: 'https://www.venstre.dk/partiet/vi-er-venstre' } },
+                  overskrift: 'Venstres Landsmøde 2026', undertitel: 'Herning, november 2026',
+              tale: { titel: 'Troels Lund Poulsens landsmødetale 2026', tekst: 'Læs Troels Lund Poulsens tale fra Venstres Landsmøde 2026 i Herning.', knap: 'Læs landsmødetalen', url: 'https://www.venstre.dk/politik/taler/troels-lund-poulsens-tale-til-venstres-landsmode-2026' },
               mappe: 'billedarkiv/2026-landsmoede', praefiks: 'lm2026', omslag: 1,
                   billeder: [
                 { n: 1, w: 2000, h: 1764, tw: 640, th: 564, alt: "Storskærmen med \"Venstres Landsmøde 2026\" i salen" },
@@ -1751,18 +1753,18 @@ body.on-sub #page-band{display:block}
         function baRender() {
             const a = BA.album ? baFind(BA.album) : null;
             if (a) {
-                return `<div class="ba"><button type="button" class="ba-back" onclick="baBack()">&larr; Billedarkiv</button>
-                    ${a.tale ? `<section class="ba-tale" aria-labelledby="ba-tale-h"><span class="ba-bar"></span><h2 id="ba-tale-h" class="ba-tale-h">${moedeEsc(a.tale.titel)}</h2><p class="ba-tale-p">${moedeEsc(a.tale.tekst)}</p><a class="ba-tale-btn" href="${moedeEsc(a.tale.url)}" target="_blank" rel="noopener noreferrer">${moedeEsc(a.tale.knap)} <span aria-hidden="true">&rarr;</span></a>${a.tale.link2 ? `<a class="ba-tale-l2" href="${moedeEsc(a.tale.link2.url)}" target="_blank" rel="noopener noreferrer">${moedeEsc(a.tale.link2.knap)} på venstre.dk <span aria-hidden="true">&rarr;</span></a>` : ''}</section>` : ''}
-                    <p class="ba-desc">${moedeEsc(a.tekst)}</p>
-                    <div class="ba-count">${a.billeder.length} billeder</div>
-                    <div class="ba-grid">${a.billeder.map((b, i) => `<button type="button" class="ba-th" onclick="baOpen(${i})" aria-label="Åbn billede ${i + 1} af ${a.billeder.length}: ${moedeEsc(b.alt)}"><img src="${moedeEsc(baSrc(a, b, true))}" width="${b.tw}" height="${b.th}" alt="${moedeEsc(b.alt)}" loading="${i < 6 ? 'eager' : 'lazy'}" decoding="async" onerror="this.closest('.ba-th').style.display='none'"></button>`).join('')}</div></div>`;
+                return `<div class="ba">
+                    <section class="ba-hero"><span class="ba-bar"></span><h2 class="ba-hero-h">${moedeEsc(a.overskrift || a.titel)}</h2>${a.undertitel ? `<div class="ba-sub">${moedeEsc(a.undertitel)}</div>` : ''}<p class="ba-desc">${moedeEsc(a.tekst)}</p></section>
+                    ${a.tale ? `<section class="ba-tale" aria-labelledby="ba-tale-h"><span class="ba-bar"></span><h2 id="ba-tale-h" class="ba-tale-h">${moedeEsc(a.tale.titel)}</h2><p class="ba-tale-p">${moedeEsc(a.tale.tekst)}</p><a class="ba-tale-btn" href="${moedeEsc(a.tale.url)}" target="_blank" rel="noopener noreferrer">${moedeEsc(a.tale.knap)} <span aria-hidden="true">&rarr;</span></a></section>` : ''}
+                    <h2 class="ba-gh">Billeder fra landsmødet <span class="ba-count">${a.billeder.length} billeder</span></h2>
+                    <div class="ba-grid">${a.billeder.map((b, i) => `<button type="button" class="ba-th" onclick="baOpen(${i})" aria-label="Åbn billede ${i + 1} af ${a.billeder.length}: ${moedeEsc(b.alt)}"><img src="${moedeEsc(baSrc(a, b, true))}" srcset="${moedeEsc(baSrc(a, b, true))} ${b.tw}w, ${moedeEsc(baSrc(a, b, false))} ${b.w}w" sizes="(min-width:1024px) 30vw, (min-width:640px) 45vw, 92vw" width="${b.tw}" height="${b.th}" alt="${moedeEsc(b.alt)}" loading="${i < 4 ? 'eager' : 'lazy'}" decoding="async" onerror="this.closest('.ba-th').style.display='none'"></button>`).join('')}</div></div>`;
             }
             return `<div class="ba">${BILLEDARKIV.map(y => `<section class="ba-year"><h2 class="ba-yh"><span class="ba-bar"></span>${moedeEsc(y.aar)}</h2><div class="ba-albums">${y.albums.map(al => {
                 const cov = al.billeder.find(b => b.n === al.omslag) || al.billeder[0];
                 return `<button type="button" class="ba-album" onclick="baShowAlbum('${moedeEsc(al.id)}')"><span class="ba-cov"><img src="${moedeEsc(baSrc(al, cov, true))}" alt="" loading="eager" onerror="this.style.display='none'"></span><span class="ba-meta"><span class="ba-t">${moedeEsc(al.titel)}</span><span class="ba-n">${al.billeder.length} billeder</span><span class="ba-d">${moedeEsc(al.tekst)}</span></span></button>`;
             }).join('')}</div></section>`).join('')}</div>`;
         }
-        function baSetTitle() { const a = BA.album ? baFind(BA.album) : null; const h = document.getElementById('page-band-title'); if (h) h.textContent = a ? a.titel : 'Billedarkiv'; }
+        function baSetTitle() { const a = BA.album ? baFind(BA.album) : null; const h = document.getElementById('page-band-title'); if (h) h.textContent = a ? a.titel : 'Landsmøde 2026'; }
         function baShowAlbum(id) { BA.album = id; document.getElementById('subpage-content').innerHTML = baRender(); baSetTitle(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
         function baBack() { BA.album = null; document.getElementById('subpage-content').innerHTML = baRender(); baSetTitle(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
         function baEnsureBox() {
@@ -1878,6 +1880,11 @@ body.on-sub #page-band{display:block}
                         </ul>
                     </div>
                     <a href="https://syddjurs.venstre.dk/bliv-medlem.html" target="_blank" class="block w-full text-center py-3 bg-v-blue text-white font-bold rounded-xl shadow-sm hover:bg-blue-700 transition-colors">Gå til tilmelding hos Venstre Syddjurs</a>
+                    <section class="bg-white rounded-2xl border border-slate-200 p-4 space-y-2" style="border-left:4px solid #EA6A12;">
+                        <h3 class="font-bold text-base text-slate-900">Vi er Venstre</h3>
+                        <p class="text-sm text-slate-600">Lær Venstre bedre at kende. Læs om partiet, fællesskabet og de værdier, der ligger bag Venstres politiske arbejde.</p>
+                        <a href="https://www.venstre.dk/partiet/vi-er-venstre" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-3 rounded-full font-bold text-white" style="background:#EA6A12;min-height:44px;">Læs om Venstre <span aria-hidden="true">&rarr;</span></a>
+                    </section>
                 `;
             } else if (type === 'djursland') {
                 // RC48.19: Venstre Djursland – samler artikler (sektioner:['djursland']) på tværs af Norddjurs og Syddjurs. Artiklerne er
@@ -1922,7 +1929,7 @@ body.on-sub #page-band{display:block}
                     </div>
                 `;
             } else if (type === 'billedarkiv') {
-                BA.album = null; html = baRender();
+                BA.album = BILLEDARKIV[0].albums[0].id; html = baRender();
             } else if (type === 'links') {
                 const nlIco = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>';
                 const okU = u => /^https:\/\//i.test(String(u || '')) ? u : '';
@@ -4416,7 +4423,7 @@ var fu=document.querySelector('#tab-forside > .rounded-3xl.overflow-hidden.md\\:
 </script>
 <script id="nav-js">
 (function(){
-  var TITLES={maerkesager:'Mærkesager',moedmenneskene:'Mød menneskerne',byraadet:'Byrådet',djursland:'Venstre Djursland',bestyrelse:'Bestyrelsen',vu:'Venstre Ungdom',medlem:'Bliv medlem',kontakt:'Kontakt',links:'Nyttige links',billedarkiv:'Billedarkiv',gdpr:'Privatliv / GDPR'};
+  var TITLES={maerkesager:'Mærkesager',moedmenneskene:'Mød menneskerne',byraadet:'Byrådet',djursland:'Venstre Djursland',bestyrelse:'Bestyrelsen',vu:'Venstre Ungdom',medlem:'Bliv medlem',kontakt:'Kontakt',links:'Nyttige links',billedarkiv:'Landsmøde 2026',gdpr:'Privatliv / GDPR'};
   var TABT={nyheder:'Nyheder',kalender:'Kalender',video:'Video',mere:'Mere',admin:'Administration'};
   var curSub=null;
   function $(i){return document.getElementById(i)}
