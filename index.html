@@ -3,7 +3,7 @@
 <html lang="da">
 <head>
     <meta charset="UTF-8">
-    <meta name="app-version" content="RC48.40 (2026-11-17)">
+    <meta name="app-version" content="RC48.41 (2026-11-17)">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Venstre Syddjurs</title>
     <meta name="description" content="Officiel app for Venstre Syddjurs – nyheder, kalender, video og mærkesager.">
@@ -68,12 +68,14 @@
         html.has-nb #nb{display:flex}
         #nb .nb-lbl{flex:0 0 auto;align-self:stretch;display:flex;align-items:center;padding:0 10px;background:#EA6A12;color:#fff;font-weight:800;font-size:11px;letter-spacing:.06em;text-transform:uppercase;position:relative;z-index:1}
         #nb .nb-view{flex:1 1 auto;overflow:hidden;min-width:0}
-        #nb .nb-track{display:inline-flex;white-space:nowrap;will-change:transform;animation:nbscroll var(--nb-dur,60s) linear infinite}
+        #nb .nb-track{display:inline-flex;max-width:none;white-space:nowrap;will-change:transform;animation:nbscroll var(--nb-dur,60s) linear infinite}
         #nb:hover .nb-track,#nb:focus-within .nb-track,#nb.nb-hold .nb-track{animation-play-state:paused}
         #nb a{display:inline-flex;align-items:center;gap:7px;color:#fff;text-decoration:none;padding:0 22px 0 0;height:36px}
         #nb a:hover,#nb a:focus-visible{text-decoration:underline;outline:none}
         #nb .nb-src{font-weight:800;color:#FDBA74}
         #nb .nb-dt{color:#93A4C0;font-size:12px}
+        #nb .nb-upd{flex:0 0 auto;align-self:stretch;display:flex;align-items:center;padding:0 10px;background:#0B1B33;color:#93A4C0;font-size:11px;white-space:nowrap;box-shadow:-8px 0 8px -4px #0B1B33;position:relative;z-index:1}
+        #nb .nb-msg{display:block;line-height:36px;padding:0 12px;color:#C7D2E6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
         #nb .nb-dot{color:#EA6A12;font-weight:900;padding-right:22px}
         @keyframes nbscroll{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
         @media (prefers-reduced-motion:reduce){#nb .nb-track{animation:none}#nb .nb-view{overflow-x:auto}}
@@ -945,7 +947,7 @@ body.on-sub #page-band{display:block}
     </footer>
 
     <!-- FOOTER NAV BAR -->
-    <div id="nb" role="region" aria-label="Nyheder om Venstre fra danske medier"><span class="nb-lbl">Nyt</span><div class="nb-view"><div class="nb-track" id="nb-track"></div></div></div>
+    <div id="nb" role="region" aria-label="Nyheder om Venstre fra danske medier"><span class="nb-lbl">Nyt</span><div class="nb-view"><div class="nb-track" id="nb-track"></div></div><span class="nb-upd" id="nb-upd"></span></div>
     <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-blue-50/90 backdrop-blur border-t border-blue-100 shadow-lg px-2 py-1 z-40 bottom-nav-safe">
         <div class="max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-6xl mx-auto flex justify-around">
             <button onclick="switchTab('forside')" id="nav-forside" class="nav-btn flex flex-col items-center gap-0.5 py-1 px-3 text-v-blue font-semibold text-xs transition-colors">
@@ -4485,7 +4487,7 @@ var fu=document.querySelector('#tab-forside > .rounded-3xl.overflow-hidden.md\\:
 <script>
 /* RC48.40: Nyhedsbjælke. Læser nyheder.json (relativ sti). Fejl/tom fil => bjælken skjules, resten af appen berøres ikke. */
 (function () {
-  var NB = { maxAge: 14 * 864e5, refresh: 2 * 36e5, last: 0 };
+  var NB = { maxAge: 72 * 36e5, refresh: 2 * 36e5, last: 0 };
   function pos() {
     try {
       var nav = document.querySelector('nav.fixed.bottom-0'), h = 0;
@@ -4496,9 +4498,26 @@ var fu=document.querySelector('#tab-forside > .rounded-3xl.overflow-hidden.md\\:
   function fmt(iso) {
     try { return new Intl.DateTimeFormat('da-DK', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Copenhagen' }).format(new Date(iso)).replace(',', ' ·'); } catch (e) { return ''; }
   }
-  function build(items) {
+  function updTxt(iso) {
+    if (!iso) return '';
+    try {
+      var d = new Date(iso), now = new Date();
+      var tid = new Intl.DateTimeFormat('da-DK', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Copenhagen' }).format(d);
+      var same = new Intl.DateTimeFormat('da-DK', { timeZone: 'Europe/Copenhagen' }).format(d) === new Intl.DateTimeFormat('da-DK', { timeZone: 'Europe/Copenhagen' }).format(now);
+      return 'Opd. ' + (same ? '' : new Intl.DateTimeFormat('da-DK', { day: 'numeric', month: 'short', timeZone: 'Europe/Copenhagen' }).format(d) + ' ') + tid;
+    } catch (e) { return ''; }
+  }
+  function show() { document.documentElement.classList.add('has-nb'); pos(); }
+  function message(txt, updIso) {   // ingen artikler / kilde utilgængelig: fast, rolig besked (ingen opdigtede nyheder)
     var tr = document.getElementById('nb-track'); if (!tr) return;
-    tr.textContent = '';
+    tr.textContent = ''; tr.style.animation = 'none'; tr.style.display = 'block'; tr.style.removeProperty('--nb-dur');
+    var m = document.createElement('span'); m.className = 'nb-msg'; m.textContent = txt; tr.appendChild(m);
+    var u = document.getElementById('nb-upd'); if (u) u.textContent = updTxt(updIso);
+    show();
+  }
+  function build(items, updIso) {
+    var tr = document.getElementById('nb-track'); if (!tr) return;
+    tr.textContent = ''; tr.style.removeProperty('animation'); tr.style.removeProperty('display');
     function pass(hidden) {
       items.forEach(function (it) {
         var a = document.createElement('a');
@@ -4513,7 +4532,8 @@ var fu=document.querySelector('#tab-forside > .rounded-3xl.overflow-hidden.md\\:
       });
     }
     pass(false); pass(true);   // to ens halvdele => sømløs løkke (-50%)
-    document.documentElement.classList.add('has-nb'); pos();
+    var u = document.getElementById('nb-upd'); if (u) u.textContent = updTxt(updIso);
+    show();
     requestAnimationFrame(function () {
       var w = tr.scrollWidth / 2; tr.style.setProperty('--nb-dur', Math.max(25, Math.round(w / 45)) + 's');   // ca. 45 px/s
     });
@@ -4523,14 +4543,16 @@ var fu=document.querySelector('#tab-forside > .rounded-3xl.overflow-hidden.md\\:
     fetch('nyheder.json?v=' + Math.floor(Date.now() / 6e5), { cache: 'no-cache' })
       .then(function (r) { if (!r.ok) throw 0; return r.json(); })
       .then(function (j) {
-        var now = Date.now();
+        var now = Date.now(), upd = j && j.opdateret;
         var items = (j && Array.isArray(j.items) ? j.items : []).filter(function (it) {
-          return it && typeof it.titel === 'string' && typeof it.kilde === 'string' && /^https?:\/\//i.test(it.link || '') && now - new Date(it.dato).getTime() < NB.maxAge;
+          var t = it && new Date(it.dato).getTime();
+          return it && typeof it.titel === 'string' && typeof it.kilde === 'string' && /^https?:\/\//i.test(it.link || '') && t && now - t < NB.maxAge && t < now + 36e5;
         }).slice(0, 10);
-        if (!items.length) { document.documentElement.classList.remove('has-nb'); return; }
-        build(items);
+        if (items.length) build(items, upd);
+        else if (!upd) message('Venter på første automatiske opdatering', null);
+        else message('Ingen nye relevante nyheder (seneste 72 t)', upd);
       })
-      .catch(function () { document.documentElement.classList.remove('has-nb'); });
+      .catch(function () { message('Nyheder kan ikke hentes lige nu', null); });
   }
   window.addEventListener('resize', pos);
   window.addEventListener('load', function () { pos(); setTimeout(pos, 800); setTimeout(pos, 2500); });
