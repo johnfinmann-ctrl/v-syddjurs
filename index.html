@@ -3,7 +3,7 @@
 <html lang="da">
 <head>
     <meta charset="UTF-8">
-    <meta name="app-version" content="RC48.41 (2026-11-17)">
+    <meta name="app-version" content="RC48.42 (2026-11-17)">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Venstre Syddjurs</title>
     <meta name="description" content="Officiel app for Venstre Syddjurs – nyheder, kalender, video og mærkesager.">
@@ -81,6 +81,16 @@
         @media (prefers-reduced-motion:reduce){#nb .nb-track{animation:none}#nb .nb-view{overflow-x:auto}}
         html.has-nb footer.bg-navy{padding-bottom:calc(3.2rem + env(safe-area-inset-bottom)) !important}
         @media (max-width:767px){html.has-nb footer.bg-navy{padding-bottom:calc(7.2rem + env(safe-area-inset-bottom)) !important}}
+        /* RC48.42: læsevenlig visning af trykt artikel med zoom */
+        #pr{position:fixed;inset:0;z-index:100000;display:none;flex-direction:column;background:#0B1B33}
+        #pr.on{display:flex}
+        #pr .pr-bar{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top)) 10px 8px;background:#0B1B33;color:#fff}
+        #pr .pr-t{flex:1 1 auto;min-width:0;font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        #pr button{min-width:44px;min-height:44px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:transparent;color:#fff;font-weight:800;font-size:16px;cursor:pointer}
+        #pr button.pr-x{background:#EA6A12;border-color:#EA6A12}
+        #pr .pr-sc{flex:1 1 auto;overflow:auto;background:#E5E7EB;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y pinch-zoom;padding-bottom:env(safe-area-inset-bottom)}
+        #pr .pr-sc img{display:block;margin:0 auto;height:auto;max-width:none;background:#fff}
+        #pr .pr-cap{flex:0 0 auto;padding:6px 12px calc(6px + env(safe-area-inset-bottom));font-size:11px;color:#93A4C0;text-align:center}
         .hide-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -1427,7 +1437,17 @@ body.on-sub #page-band{display:block}
               langText: 'Kasper Bjerregaard valgt til Venstres Hovedbestyrelse\n\nStort tillykke til Norddjurs\' borgmester Kasper Bjerregaard, der på Venstres Landsmøde 2026 i Herning er blevet valgt til partiets Hovedbestyrelse.\n\nDet er en glædelig nyhed for Venstre i Norddjurs og for hele Djursland.\n\nMed Kasper i Hovedbestyrelsen får Djursland en lokal politiker med direkte adgang til arbejdet med Venstres udvikling og politiske retning på landsplan.\n\nDet giver gode muligheder for at bringe erfaringer og perspektiver fra vores del af Danmark med ind i de nationale drøftelser.\n\nFra både Syd- og Norddjurs skal der lyde et stort tillykke til Kasper med valget.\n\nVi glæder os til det fortsatte samarbejde og til at styrke Venstres politiske arbejde på Djursland. 💙',
               hideShortInDetail: true, fullImages: true, mediaPersons: [],
               image: './landsmoede-kasper-talerstol.jpg', imagePosition: '70% 30%',
-              gallery: [{ src: './landsmoede-kasper-foto2.jpg', alt: 'Kasper Bjerregaard på talerstolen ved Venstres Landsmøde i Herning' }] }
+              gallery: [{ src: './landsmoede-kasper-foto2.jpg', alt: 'Kasper Bjerregaard på talerstolen ved Venstres Landsmøde i Herning' }] },
+            // RC48.42: Din Avis Syddjurs, kommentar af Lars Norman Thomsen (redaktør). Trykt udgave; endnu ikke fundet online -> INGEN webadresse.
+            // Én registrering: vises under Nyheder (Politik) og Venstre Djursland. Skærmbilledet af den trykte side vises KUN når
+            // printTilladelse === true (kræver dokumenteret tilladelse fra Din Avis). Når artiklen er online: sæt externalLink og fjern printBillede.
+            { id: 900015, title: 'Mens Venstre bløder på Christiansborg, buldrer partiet frem på Djursland', category: 'Politik', date: '2026-11-17', dateUnverified: true, neverHero: true, noCarousel: true, medie: 'Din Avis Syddjurs',
+              sektioner: ['djursland'], djurslandGruppe: 'artikel',
+              forfatter: 'Lars Norman Thomsen, redaktør', artikelType: 'Kommentar',
+              shortText: 'Kommentar i Din Avis Syddjurs om Venstres lokale fremgang på Djursland, mens partiet kæmper for at få bid i landspolitikken.',
+              langText: 'Kilde: Din Avis Syddjurs, Lars Norman Thomsen, redaktør (kommentar), trykt udgave.',
+              printBillede: './din-avis-kommentar-2026-11.jpg', printTilladelse: false, printBilledeAlt: 'Skærmbillede af den trykte kommentar i Din Avis Syddjurs',
+              externalLink: '', mediaPersons: [] }
         ];
         // RC48.25: Facebook-video på Christoffer Pedersens profil (titel/indhold endnu ikke verificeret). Ikke en nyhed -> ikke i Nyheder/karrusel.
         const PROFILE_VIDEOS = { 'christoffer pedersen': [{ title: 'Video fra Facebook', url: 'https://fb.watch/KJDgnhwMqu/' }] };
@@ -2370,6 +2390,7 @@ body.on-sub #page-band{display:block}
                 <span class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-full uppercase tracking-wide inline-block">${item.category}</span>
                 <h2 class="text-xl font-bold text-slate-900 leading-tight">${item.title}</h2>
                 <div class="text-slate-400 text-[11px] font-medium">${newsDateText(item)}</div>
+                ${item.forfatter ? `<div class="text-[12px] font-semibold text-slate-600">${item.artikelType ? moedeEsc(item.artikelType) + ' af ' : ''}${moedeEsc(item.forfatter)}${item.medie ? ' · ' + moedeEsc(item.medie) : ''}</div>` : ''}
                 ${item.introParas ? `<div class="text-sm text-slate-600 whitespace-pre-wrap leading-relaxed border-t border-slate-100 pt-3">${nd.intro}</div>` : ''}
                 ${item.image ? `<img src="${item.image}" class="w-full ${item.fullImages ? 'h-auto' : 'h-44 object-cover'} rounded-xl my-2 shadow-sm" style="${item.imagePosition ? 'object-position:'+item.imagePosition+';' : ''}" onerror="this.remove()">` : ''}
                 ${item.introParas ? '' : (item.hideShortInDetail ? '' : `<p class="text-sm font-semibold text-slate-700 leading-relaxed">${item.shortText}</p>`)}
@@ -2379,6 +2400,8 @@ body.on-sub #page-band{display:block}
                 ${!item.introParas && item.video && item.video.src ? moedeVideoHtml(item.video) : ''}
                 ${item.image2 ? `<img src="${item.image2}" class="w-full h-44 object-cover rounded-xl mt-3 shadow-sm" style="${item.image2Position ? 'object-position:'+item.image2Position+';' : ''}">` : ''}
                 ${item.image3 ? `<img src="${item.image3}" class="w-full h-44 object-cover rounded-xl mt-3 shadow-sm" style="${item.image3Position ? 'object-position:'+item.image3Position+';' : ''}">` : ''}
+                ${item.printBillede && item.printTilladelse === true ? `<button type="button" onclick="prOpen(${item.id})" class="inline-flex items-center gap-2 text-white font-bold text-sm px-5 py-3 rounded-full mt-3" style="background:#EA6A12;min-height:44px;"><i data-lucide="newspaper" class="w-4 h-4"></i> Læs artiklen (trykt udgave)</button>` : ''}
+                ${item.printBillede && item.printTilladelse !== true && !item.externalLink ? `<p class="text-xs text-slate-500 mt-3">Artiklen er trykt i ${moedeEsc(item.medie || 'avisen')}. Et direkte link til originalartiklen indsættes, når den er tilgængelig online.</p>` : ''}
                 <div class="flex flex-wrap gap-2 mt-3">
                     ${item.pdf ? `
                     <button onclick="openPdfModal('${item.pdf}', '${item.title.replace(/'/g, "\\'")}')" class="inline-flex items-center gap-2 bg-v-blue text-white font-bold text-xs px-4 py-2.5 rounded-full hover:bg-blue-700 transition-colors">
@@ -4482,6 +4505,44 @@ var fu=document.querySelector('#tab-forside > .rounded-3xl.overflow-hidden.md\\:
   document.addEventListener('click',function(e){var m=$('tn-mere-menu');if(m&&!m.classList.contains('hidden')&&!e.target.closest('#tn-mere-menu')){m.classList.add('hidden')}});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'){var m=$('tn-mere-menu');if(m)m.classList.add('hidden')}});
   sync();
+})();
+</script>
+<script>
+/* RC48.42: Læsevisning af trykt artikel (kun når printTilladelse === true) */
+(function () {
+  var Z = [1, 1.5, 2, 3, 4], zi = 0, cur = null;
+  function el() {
+    var e = document.getElementById('pr'); if (e) return e;
+    e = document.createElement('div'); e.id = 'pr'; e.setAttribute('role', 'dialog'); e.setAttribute('aria-modal', 'true'); e.setAttribute('aria-label', 'Læsevisning af artikel');
+    e.innerHTML = '<div class="pr-bar"><span class="pr-t" id="pr-t"></span><button type="button" id="pr-m" aria-label="Zoom ud">&minus;</button><button type="button" id="pr-p" aria-label="Zoom ind">+</button><button type="button" class="pr-x" id="pr-x" aria-label="Luk">&times;</button></div><div class="pr-sc" id="pr-sc"><img id="pr-i" alt=""></div><div class="pr-cap" id="pr-c"></div>';
+    document.body.appendChild(e);
+    document.getElementById('pr-x').onclick = prClose;
+    document.getElementById('pr-m').onclick = function () { zoom(zi - 1); };
+    document.getElementById('pr-p').onclick = function () { zoom(zi + 1); };
+    document.getElementById('pr-i').addEventListener('dblclick', function () { zoom(zi >= 2 ? 0 : zi + 2); });
+    document.addEventListener('keydown', function (ev) { if (!cur) return; if (ev.key === 'Escape') prClose(); else if (ev.key === '+' || ev.key === '=') zoom(zi + 1); else if (ev.key === '-') zoom(zi - 1); });
+    return e;
+  }
+  function zoom(i) {
+    zi = Math.max(0, Math.min(Z.length - 1, i));
+    var sc = document.getElementById('pr-sc'), img = document.getElementById('pr-i');
+    var mid = sc.scrollTop + sc.clientHeight / 2, rel = sc.scrollHeight ? mid / sc.scrollHeight : 0;
+    var base = Math.min(sc.clientWidth, 720); img.style.width = Math.round(Z[zi] * base) + 'px';
+    sc.scrollTop = rel * sc.scrollHeight - sc.clientHeight / 2;
+    document.getElementById('pr-m').disabled = zi === 0; document.getElementById('pr-p').disabled = zi === Z.length - 1;
+  }
+  window.prOpen = function (id) {
+    var it = (typeof newsItemsAll === 'function' ? newsItemsAll() : []).find(function (n) { return n.id == id; });
+    if (!it || !it.printBillede || it.printTilladelse !== true) return;
+    cur = it; var e = el();
+    document.getElementById('pr-t').textContent = (it.medie || '') + ' · ' + (it.forfatter || '');
+    var img = document.getElementById('pr-i'); img.alt = it.printBilledeAlt || ''; img.src = it.printBillede;
+    document.getElementById('pr-c').textContent = 'Trykt udgave. Brug + og − eller knib for at zoome, og træk for at flytte.';
+    e.classList.add('on'); document.body.style.overflow = 'hidden'; zi = 0; zoom(0);
+    document.getElementById('pr-sc').scrollTop = 0;
+  };
+  function prClose() { var e = document.getElementById('pr'); if (e) e.classList.remove('on'); document.body.style.overflow = ''; cur = null; }
+  window.prClose = prClose;
 })();
 </script>
 <script>
