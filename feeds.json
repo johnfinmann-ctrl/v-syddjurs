@@ -1,0 +1,17 @@
+{
+  "_note": "Kun kilder med egen, offentlig RSS-feed. Hver kilde skal verificeres ved første kørsel (se Actions-loggen). Sæt aktiv=false for at slå en kilde fra. Din Avis, Jyllands-Posten og Ritzau er bevidst IKKE med (vilkår/licens, se rapport).",
+  "feeds": [
+    { "id": "dr",        "navn": "DR Nyheder",       "url": "https://www.dr.dk/nyheder/service/feeds/allenyheder", "lokal": false, "aktiv": true },
+    { "id": "politiken", "navn": "Politiken",        "url": "https://politiken.dk/rss/senestenyt.rss",            "lokal": false, "aktiv": true },
+    { "id": "tv2oj",     "navn": "TV 2 Østjylland",  "url": "https://www.tv2ostjylland.dk/rss",                   "lokal": true,  "aktiv": true }
+  ],
+  "soegeord": {
+    "parti": ["venstre", "venstres", "venstrefolk", "venstrepolitiker"],
+    "personer": ["troels lund poulsen", "stephanie lose", "niels søren rasmussen", "jørgen ivar brus mikkelsen", "henriette qvist eriksen", "christoffer pedersen", "camilla engholm", "peter sand"],
+    "lokalt": ["syddjurs", "norddjurs", "ebeltoft", "rønde", "grenaa", "grenå", "djursland"],
+    "kommunalpolitik": ["byråd", "byrådet", "borgmester", "kommunalbestyrelse", "budget", "lokalplan", "kommunen"]
+  },
+  "max_alder_dage": 14,
+  "antal": 10,
+  "max_lokale": 5
+}
