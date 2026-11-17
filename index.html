@@ -3,7 +3,7 @@
 <html lang="da">
 <head>
     <meta charset="UTF-8">
-    <meta name="app-version" content="RC48.43 (2026-11-17)">
+    <meta name="app-version" content="RC48.44 (2026-11-17)">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Venstre Syddjurs</title>
     <meta name="description" content="Officiel app for Venstre Syddjurs – nyheder, kalender, video og mærkesager.">
@@ -1438,16 +1438,16 @@ body.on-sub #page-band{display:block}
               hideShortInDetail: true, fullImages: true, mediaPersons: [],
               image: './landsmoede-kasper-talerstol.jpg', imagePosition: '70% 30%',
               gallery: [{ src: './landsmoede-kasper-foto2.jpg', alt: 'Kasper Bjerregaard på talerstolen ved Venstres Landsmøde i Herning' }] },
-            // RC48.42: Din Avis Syddjurs, kommentar af Lars Norman Thomsen (redaktør). Trykt udgave; endnu ikke fundet online -> INGEN webadresse.
+            // RC48.42/44: Din Avis Syddjurs, kommentar af Lars Norman Thomsen. RC48.44: online -> direkte link; den midlertidige billedkopi er fjernet.
             // Én registrering: vises under Nyheder (Politik) og Venstre Djursland. Skærmbilledet af den trykte side vises KUN når
             // printTilladelse === true (kræver dokumenteret tilladelse fra Din Avis). Når artiklen er online: sæt externalLink og fjern printBillede.
-            { id: 900015, title: 'Mens Venstre bløder på Christiansborg, buldrer partiet frem på Djursland', category: 'Politik', date: '2026-11-17', dateUnverified: true, neverHero: true, noCarousel: true, medie: 'Din Avis Syddjurs',
+            { id: 900015, title: 'Mens Venstre bløder på Christiansborg, buldrer partiet frem på Djursland', category: 'Politik', date: '2026-11-17', neverHero: true, noCarousel: true, medie: 'Din Avis Syddjurs',
               sektioner: ['djursland'], djurslandGruppe: 'artikel',
-              forfatter: 'Lars Norman Thomsen, redaktør', artikelType: 'Kommentar',
+              forfatter: 'Lars Norman Thomsen', artikelType: 'Kommentar',
               shortText: 'Kommentar i Din Avis Syddjurs om Venstres lokale fremgang på Djursland, mens partiet kæmper for at få bid i landspolitikken.',
-              langText: 'Kilde: Din Avis Syddjurs, Lars Norman Thomsen, redaktør (kommentar), trykt udgave.',
-              printBillede: './din-avis-kommentar-2026-11.jpg', printTilladelse: true, printBilledeAlt: 'Skærmbillede af den trykte kommentar i Din Avis Syddjurs',
-              externalLink: '', mediaPersons: [] }
+              langText: 'Kilde: Din Avis Syddjurs, Lars Norman Thomsen (kommentar).',
+              externalLink: 'https://dinavis.dk/debat/ECE19834902/mens-venstre-bloeder-paa-christiansborg-buldrer-partiet-frem-paa-djursland/', externalLinkLabel: 'Læs artiklen hos Din Avis',
+              mediaPersons: [] }
         ];
         // RC48.25: Facebook-video på Christoffer Pedersens profil (titel/indhold endnu ikke verificeret). Ikke en nyhed -> ikke i Nyheder/karrusel.
         const PROFILE_VIDEOS = { 'christoffer pedersen': [{ title: 'Video fra Facebook', url: 'https://fb.watch/KJDgnhwMqu/' }] };
