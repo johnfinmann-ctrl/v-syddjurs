@@ -1,0 +1,4 @@
+{
+ "_vejledning": "Tilføj udvalgte artikler under \"artikler\" uden at ændre kode. Felter: kilde, titel, link (https), dato (ÅÅÅÅ-MM-DD eller med klokkeslæt), udloeb (ÅÅÅÅ-MM-DD, sidste visningsdag). Uden udloeb vises artiklen i 30 dage fra dato.",
+ "artikler": []
+}

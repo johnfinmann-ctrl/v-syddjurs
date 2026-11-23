@@ -50,3 +50,13 @@ Claude kunne ikke nå mediernes feeds fra sin testmiljø, så den første rigtig
 - Planlagte kørsler kan blive forsinket af GitHub, og GitHub kan sætte planlagte workflows på pause efter 60 dages inaktivitet i repoet.
 - Kilder, der fejler, springes over; de øvrige fortsætter. Fejlen står i Actions-loggen og i `nyheder.json` → `kilder`.
 - Tjek mediernes vilkår for visning af overskrifter og links, før en kilde slås til. Dette er ikke juridisk rådgivning.
+
+## Udvalgte artikler i bjælken (RC48.45)
+Bjælken kombinerer to ting: (1) automatisk hentede medienyheder (`nyheder.json`, 72-timersreglen) og (2) manuelt udvalgte artikler, som vises først.
+Udvalgte artikler kan komme fra to steder – **ingen kodeændringer er nødvendige**:
+1. **Appens egne nyheder:** tilføj `bjaelke: true` på en nyhed, der har `externalLink`. Valgfrit: `bjaelkeKilde`, `bjaelkeDato`, `bjaelkeUdloeb` (se Din Avis-kommentaren i `index.html`).
+2. **Filen `udvalgte.json`** (redigeres direkte på GitHub, intet andet skal røres): tilføj en række under `artikler`:
+   `{ "kilde": "Din Avis Syddjurs", "titel": "...", "link": "https://...", "dato": "2026-11-17", "udloeb": "2026-12-07" }`
+   `udloeb` er sidste visningsdag. Uden `udloeb` vises artiklen i 30 dage fra `dato`.
+- Samme artikel vises kun én gang (sammenlignet på link uden parametre og på overskrift), også hvis den senere findes automatisk. Den manuelle version vinder.
+- Manuelle artikler skjules aldrig af automatikkens status. Til højre i bjælken står enten »Opd. tt.mm« (seneste vellykkede automatiske kørsel), »Auto venter« (kørt endnu ikke) eller »Auto utilgængelig« (nyheder.json kunne ikke hentes).

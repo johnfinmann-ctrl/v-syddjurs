@@ -3,7 +3,7 @@
 <html lang="da">
 <head>
     <meta charset="UTF-8">
-    <meta name="app-version" content="RC48.44 (2026-11-17)">
+    <meta name="app-version" content="RC48.45 (2026-11-23)">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Venstre Syddjurs</title>
     <meta name="description" content="Officiel app for Venstre Syddjurs – nyheder, kalender, video og mærkesager.">
@@ -72,7 +72,7 @@
         #nb:hover .nb-track,#nb:focus-within .nb-track,#nb.nb-hold .nb-track{animation-play-state:paused}
         #nb a{display:inline-flex;align-items:center;gap:7px;color:#fff;text-decoration:none;padding:0 22px 0 0;height:36px}
         #nb a:hover,#nb a:focus-visible{text-decoration:underline;outline:none}
-        #nb .nb-src{font-weight:800;color:#FDBA74}
+        #nb .nb-src{font-weight:800;color:#FDBA74;text-transform:uppercase;letter-spacing:.02em}
         #nb .nb-dt{color:#93A4C0;font-size:12px}
         #nb .nb-upd{flex:0 0 auto;align-self:stretch;display:flex;align-items:center;padding:0 10px;background:#0B1B33;color:#93A4C0;font-size:11px;white-space:nowrap;box-shadow:-8px 0 8px -4px #0B1B33;position:relative;z-index:1}
         #nb .nb-msg{display:block;line-height:36px;padding:0 12px;color:#C7D2E6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
@@ -1447,6 +1447,8 @@ body.on-sub #page-band{display:block}
               shortText: 'Kommentar i Din Avis Syddjurs om Venstres lokale fremgang på Djursland, mens partiet kæmper for at få bid i landspolitikken.',
               langText: 'Kilde: Din Avis Syddjurs, Lars Norman Thomsen (kommentar).',
               externalLink: 'https://dinavis.dk/debat/ECE19834902/mens-venstre-bloeder-paa-christiansborg-buldrer-partiet-frem-paa-djursland/', externalLinkLabel: 'Læs artiklen hos Din Avis',
+              // RC48.45: vises også i nyhedsbjælken (bjaelke: true). bjaelkeUdloeb = sidste visningsdag i bjælken (selvstændig udløbsdato).
+              bjaelke: true, bjaelkeKilde: 'Din Avis Syddjurs', bjaelkeDato: '2026-11-17T13:15:00+01:00', bjaelkeUdloeb: '2026-12-07',
               mediaPersons: [] }
         ];
         // RC48.25: Facebook-video på Christoffer Pedersens profil (titel/indhold endnu ikke verificeret). Ikke en nyhed -> ikke i Nyheder/karrusel.
@@ -4557,7 +4559,28 @@ var fu=document.querySelector('#tab-forside > .rounded-3xl.overflow-hidden.md\\:
     } catch (e) {}
   }
   function fmt(iso) {
-    try { return new Intl.DateTimeFormat('da-DK', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Copenhagen' }).format(new Date(iso)).replace(',', ' ·'); } catch (e) { return ''; }
+    try {
+      var dateOnly = /^\d{4}-\d{2}-\d{2}$/.test(String(iso)), o = { day: 'numeric', month: 'short', timeZone: 'Europe/Copenhagen' };
+      if (!dateOnly) { o.hour = '2-digit'; o.minute = '2-digit'; }
+      return new Intl.DateTimeFormat('da-DK', o).format(new Date(iso)).replace(',', ' ·');
+    } catch (e) { return ''; }
+  }
+  function dayEnd(s) { return /^\d{4}-\d{2}-\d{2}$/.test(String(s)) ? new Date(s + 'T23:59:59+01:00').getTime() : new Date(s).getTime(); }
+  function linkKey(u) { try { var x = new URL(u); return x.hostname.replace(/^www\./, '').toLowerCase() + x.pathname.replace(/\/+$/, '').toLowerCase(); } catch (e) { return String(u).toLowerCase(); } }
+  function titKey(t) { return String(t || '').toLowerCase().replace(/[^a-zæøå0-9]+/g, ' ').trim(); }
+  // Manuelt udvalgte artikler: (1) appens egne nyheder med bjaelke:true og externalLink, (2) filen udvalgte.json. Egen udløbsdato (udloeb).
+  function manualItems(fileJson) {
+    var out = [], now = Date.now();
+    try { (typeof newsItemsAll === 'function' ? newsItemsAll() : []).forEach(function (n) {
+      if (n && n.bjaelke === true && n.externalLink) out.push({ kilde: n.bjaelkeKilde || n.medie || '', titel: n.title, link: n.externalLink, dato: n.bjaelkeDato || n.date, udloeb: n.bjaelkeUdloeb });
+    }); } catch (e) {}
+    if (fileJson && Array.isArray(fileJson.artikler)) fileJson.artikler.forEach(function (a) { if (a) out.push({ kilde: a.kilde, titel: a.titel, link: a.link, dato: a.dato, udloeb: a.udloeb }); });
+    return out.filter(function (it) {
+      if (!(it.titel && it.kilde && /^https?:\/\//i.test(it.link || '') && it.dato)) return false;
+      var d = new Date(it.dato).getTime(); if (!d) return false;
+      var end = it.udloeb ? dayEnd(it.udloeb) : d + 30 * 864e5;   // uden udloeb: 30 dage efter artiklens dato
+      return end && end > now;
+    });
   }
   function updTxt(iso) {
     if (!iso) return '';
@@ -4569,14 +4592,19 @@ var fu=document.querySelector('#tab-forside > .rounded-3xl.overflow-hidden.md\\:
     } catch (e) { return ''; }
   }
   function show() { document.documentElement.classList.add('has-nb'); pos(); }
-  function message(txt, updIso) {   // ingen artikler / kilde utilgængelig: fast, rolig besked (ingen opdigtede nyheder)
+  function setStatus(upd, autoOk) {
+    var u = document.getElementById('nb-upd'); if (!u) return;
+    if (!autoOk) { u.textContent = 'Auto utilgængelig'; u.title = 'Den automatiske nyhedsfil kunne ikke hentes'; }
+    else if (!upd) { u.textContent = 'Auto venter'; u.title = 'Den automatiske opdatering har endnu ikke kørt'; }
+    else { u.textContent = updTxt(upd); u.title = 'Seneste vellykkede automatiske opdatering'; }
+  }
+  function message(txt, upd, autoOk) {   // ingen artikler: fast, rolig besked (ingen opdigtede nyheder)
     var tr = document.getElementById('nb-track'); if (!tr) return;
     tr.textContent = ''; tr.style.animation = 'none'; tr.style.display = 'block'; tr.style.removeProperty('--nb-dur');
     var m = document.createElement('span'); m.className = 'nb-msg'; m.textContent = txt; tr.appendChild(m);
-    var u = document.getElementById('nb-upd'); if (u) u.textContent = updTxt(updIso);
-    show();
+    setStatus(upd, autoOk); show();
   }
-  function build(items, updIso) {
+  function build(items, upd, autoOk) {
     var tr = document.getElementById('nb-track'); if (!tr) return;
     tr.textContent = ''; tr.style.removeProperty('animation'); tr.style.removeProperty('display');
     function pass(hidden) {
@@ -4593,27 +4621,34 @@ var fu=document.querySelector('#tab-forside > .rounded-3xl.overflow-hidden.md\\:
       });
     }
     pass(false); pass(true);   // to ens halvdele => sømløs løkke (-50%)
-    var u = document.getElementById('nb-upd'); if (u) u.textContent = updTxt(updIso);
-    show();
+    setStatus(upd, autoOk); show();
     requestAnimationFrame(function () {
       var w = tr.scrollWidth / 2; tr.style.setProperty('--nb-dur', Math.max(25, Math.round(w / 45)) + 's');   // ca. 45 px/s
     });
   }
+  function getJson(u) {
+    return fetch(u + '?v=' + Math.floor(Date.now() / 6e5), { cache: 'no-cache' }).then(function (r) { if (!r.ok) throw 0; return r.json(); }).catch(function () { return null; });
+  }
   function load() {
     NB.last = Date.now();
-    fetch('nyheder.json?v=' + Math.floor(Date.now() / 6e5), { cache: 'no-cache' })
-      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
-      .then(function (j) {
-        var now = Date.now(), upd = j && j.opdateret;
-        var items = (j && Array.isArray(j.items) ? j.items : []).filter(function (it) {
-          var t = it && new Date(it.dato).getTime();
-          return it && typeof it.titel === 'string' && typeof it.kilde === 'string' && /^https?:\/\//i.test(it.link || '') && t && now - t < NB.maxAge && t < now + 36e5;
-        }).slice(0, 10);
-        if (items.length) build(items, upd);
-        else if (!upd) message('Venter på første automatiske opdatering', null);
-        else message('Ingen nye relevante nyheder (seneste 72 t)', upd);
-      })
-      .catch(function () { message('Nyheder kan ikke hentes lige nu', null); });
+    Promise.all([getJson('nyheder.json'), getJson('udvalgte.json')]).then(function (res) {
+      var j = res[0], now = Date.now(), autoOk = !!j, upd = j && j.opdateret;
+      var man = manualItems(res[1]);
+      var auto = (j && Array.isArray(j.items) ? j.items : []).filter(function (it) {   // automatisk indsamlet: 72-timersreglen
+        var t = it && new Date(it.dato).getTime();
+        return it && typeof it.titel === 'string' && typeof it.kilde === 'string' && /^https?:\/\//i.test(it.link || '') && t && now - t < NB.maxAge && t < now + 36e5;
+      });
+      var seenL = {}, seenT = {}, items = [];
+      man.concat(auto).forEach(function (it) {   // manuelle først; samme artikel kun én gang
+        var lk = linkKey(it.link), tk = titKey(it.titel);
+        if (seenL[lk] || seenT[tk]) return; seenL[lk] = seenT[tk] = 1; items.push(it);
+      });
+      items = items.slice(0, 10);
+      if (items.length) build(items, upd, autoOk);
+      else if (!autoOk) message('Nyheder kan ikke hentes lige nu', null, false);
+      else if (!upd) message('Venter på første automatiske opdatering', null, true);
+      else message('Ingen nye relevante nyheder (seneste 72 t)', upd, true);
+    });
   }
   window.addEventListener('resize', pos);
   window.addEventListener('load', function () { pos(); setTimeout(pos, 800); setTimeout(pos, 2500); });
