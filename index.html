@@ -3,7 +3,7 @@
 <html lang="da">
 <head>
     <meta charset="UTF-8">
-    <meta name="app-version" content="RC48.45 (2026-11-23)">
+    <meta name="app-version" content="RC48.46 (2026-11-24)">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Venstre Syddjurs</title>
     <meta name="description" content="Officiel app for Venstre Syddjurs – nyheder, kalender, video og mærkesager.">
@@ -1449,7 +1449,15 @@ body.on-sub #page-band{display:block}
               externalLink: 'https://dinavis.dk/debat/ECE19834902/mens-venstre-bloeder-paa-christiansborg-buldrer-partiet-frem-paa-djursland/', externalLinkLabel: 'Læs artiklen hos Din Avis',
               // RC48.45: vises også i nyhedsbjælken (bjaelke: true). bjaelkeUdloeb = sidste visningsdag i bjælken (selvstændig udløbsdato).
               bjaelke: true, bjaelkeKilde: 'Din Avis Syddjurs', bjaelkeDato: '2026-11-17T13:15:00+01:00', bjaelkeUdloeb: '2026-12-07',
-              mediaPersons: [] }
+              mediaPersons: [] },
+            // RC48.46: Din Avis, Lars Norman Thomsen, 23.11.2026 kl. 16.45. Én registrering: Nyheder (Seneste/Politik), Jørgen Ivars profil (mediaPersons) og nyhedsbjælken (bjaelke).
+            { id: 900016, title: 'Mols Bjerge får naturnationalpark – men ingen ved hvornår', category: 'Politik', date: '2026-11-23', neverHero: true, noCarousel: true, medie: 'Din Avis',
+              forfatter: 'Lars Norman Thomsen',
+              shortText: 'Din Avis om naturnationalparken Mols Bjerge, hvor der endnu ikke er fastsat en tidsplan. Jørgen Ivar Brus Mikkelsen (V) udtaler sig i artiklen.',
+              langText: 'Ifølge Din Avis er Naturnationalpark Mols Bjerge stadig i forberedelsesfasen, og der er endnu ikke fastsat en tidsplan. Jørgen Ivar Brus Mikkelsen (V) udtaler i artiklen, at statens råderum er lille, og at han ikke tror på, at besøgstallet vil vokse markant, når parken kommer i drift.\n\nKilde: Din Avis, Lars Norman Thomsen, Jyllands-Postens Lokalaviser, 23. november 2026.', image: '',
+              externalLink: 'https://dinavis.dk/politik/ECE19858783/mols-bjerge-faar-naturnationalpark-men-ingen-ved-hvornaar/', externalLinkLabel: 'Læs artiklen hos Din Avis',
+              bjaelke: true, bjaelkeKilde: 'Din Avis', bjaelkeDato: '2026-11-23T16:45:00+01:00', bjaelkeUdloeb: '2026-12-07',
+              mediaPersons: ['Jørgen Ivar Brus Mikkelsen'] }
         ];
         // RC48.25: Facebook-video på Christoffer Pedersens profil (titel/indhold endnu ikke verificeret). Ikke en nyhed -> ikke i Nyheder/karrusel.
         const PROFILE_VIDEOS = { 'christoffer pedersen': [{ title: 'Video fra Facebook', url: 'https://fb.watch/KJDgnhwMqu/' }] };
