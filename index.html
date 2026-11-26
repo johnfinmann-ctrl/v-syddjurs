@@ -3,7 +3,7 @@
 <html lang="da">
 <head>
     <meta charset="UTF-8">
-    <meta name="app-version" content="RC48.46 (2026-11-24)">
+    <meta name="app-version" content="RC48.47 (2026-11-25)">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Venstre Syddjurs</title>
     <meta name="description" content="Officiel app for Venstre Syddjurs – nyheder, kalender, video og mærkesager.">
@@ -11,6 +11,12 @@
     <!-- RC48.8.1: app-ikon (blaa baggrund, hvidt V med orange detalje). Filerne ligger i samme mappe som index.html. -->
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=3">
     <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=3">
+    <!-- RC48.47: PWA – manifest + iOS-metatags. Ikoner (192/512/maskable/180) og sw.js ligger i samme mappe som index.html. -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Venstre Syddjurs">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
     <!--
         PWA-filer (manifest.json, sw.js, ikoner) er bevidst IKKE inkluderet i denne version.
@@ -542,6 +548,7 @@ body.on-sub #page-band{display:block}
                         <button role="menuitem" class="tm-i" onclick="topMere(()=>openSubpage('links'))">Nyttige links</button>
                         <button role="menuitem" class="tm-i" onclick="topMere(()=>openSubpage('kontakt'))">Kontakt</button>
                         <button role="menuitem" class="tm-i" onclick="topMere(()=>openSubpage('gdpr'))">Privatliv / GDPR</button>
+                        <button role="menuitem" class="tm-i" id="tm-install" style="display:none" onclick="topMere(()=>pwaInstall())">Installér appen</button>
                         <button role="menuitem" class="tm-i" onclick="topMere(()=>switchTab('mere'))" style="border-top:1px solid #E2E8F0;margin-top:4px;color:#64748B;">Se hele Mere-siden →</button>
                     </div>
                 </div>
@@ -796,6 +803,13 @@ body.on-sub #page-band{display:block}
                     <div class="flex items-center gap-3">
                         <div class="flex-shrink-0" style="width:40px;height:40px;"><svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true" focusable="false" style="display:block;"><g clip-path="url(#mereClip)"><rect width="48" height="48" fill="url(#mereBlue)"/><path d="M0 42 C12 40 25 31 35 17" stroke="#FFFFFF" stroke-opacity="0.10" stroke-width="7" fill="none"/><path d="M48 19 C42 30 33 41 19 48 L48 48 Z" fill="url(#mereOrg)"/></g><path d="M24 11.500l10 3.800v7.500c0 7-4.500 11.200-10 13.200-5.500-2-10-6.200-10-13.200v-7.500z" stroke="#fff" stroke-width="2.800" stroke-linejoin="round" fill="none"/><path d="M19.500 24l3.300 3.300 6-6.300" stroke="#fff" stroke-width="2.800" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
                         <span class="font-semibold">Privatliv / GDPR</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 group-hover:text-v-blue transition-colors"></i>
+                </button>
+                <button id="mere-install" type="button" onclick="pwaInstall()" class="hidden w-full px-5 py-4 flex items-center justify-between hover:bg-slate-50 text-left group">
+                    <div class="flex items-center gap-3">
+                        <div class="flex-shrink-0 flex items-center justify-center rounded-xl bg-slate-100 text-slate-500" style="width:40px;height:40px;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></div>
+                        <span class="font-semibold text-slate-700">Installér appen</span>
                     </div>
                     <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 group-hover:text-v-blue transition-colors"></i>
                 </button>
@@ -2002,6 +2016,8 @@ body.on-sub #page-band{display:block}
                         <p>For Venstre i Syddjurs' fulde retningslinjer for behandling af personoplysninger, se den officielle side: <a href="https://syddjurs.venstre.dk/behandling-af-personoplysninger.html" target="_blank" rel="noopener" class="text-v-blue font-semibold hover:underline">syddjurs.venstre.dk/behandling-af-personoplysninger</a>.</p>
                     </div>
                 `;
+            } else if (type === 'installer') {
+                html = (typeof window.pwaGuideHtml === 'function') ? window.pwaGuideHtml() : '';
             } else if (type === 'moedmenneskene') {
                 // Selvstændig "Mød menneskene"-side: Byrådet (med billeder) og Bestyrelsen (uden),
                 // med et skift mellem dem. Samme data som eksisterende byraadet/bestyrelse-sider —
@@ -4351,12 +4367,18 @@ body.on-sub #page-band{display:block}
         }
     -->
     <script>
-        // Ryd evt. tidligere registrerede service workers fra browserens cache,
-        // så gamle PWA-forsøg ikke blokerer eller viser forældet indhold.
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(regs => {
-                regs.forEach(reg => reg.unregister());
-            }).catch(() => {});
+        // RC48.47: minimal service worker (./sw.js) som gør appen installerbar. Den cacher intet (se sw.js).
+        // Andre/ældre service workers fra tidligere PWA-forsøg ryddes stadig væk, så de ikke viser forældet indhold.
+        if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+            navigator.serviceWorker.getRegistrations().then(function (regs) {
+                regs.forEach(function (reg) {
+                    var w = reg.active || reg.waiting || reg.installing;
+                    if (!w || !/\/sw\.js(\?.*)?$/.test(w.scriptURL)) reg.unregister();
+                });
+            }).catch(function () {});
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).catch(function () {});
+            });
         }
     </script>
     <script>
@@ -4477,7 +4499,7 @@ var fu=document.querySelector('#tab-forside > .rounded-3xl.overflow-hidden.md\\:
 </script>
 <script id="nav-js">
 (function(){
-  var TITLES={maerkesager:'Mærkesager',moedmenneskene:'Mød menneskerne',byraadet:'Byrådet',djursland:'Venstre Djursland',bestyrelse:'Bestyrelsen',vu:'Venstre Ungdom',medlem:'Bliv medlem',kontakt:'Kontakt',links:'Nyttige links',billedarkiv:'Landsmøde 2026',gdpr:'Privatliv / GDPR'};
+  var TITLES={maerkesager:'Mærkesager',moedmenneskene:'Mød menneskerne',byraadet:'Byrådet',djursland:'Venstre Djursland',bestyrelse:'Bestyrelsen',vu:'Venstre Ungdom',medlem:'Bliv medlem',kontakt:'Kontakt',links:'Nyttige links',billedarkiv:'Landsmøde 2026',gdpr:'Privatliv / GDPR',installer:'Installér appen'};
   var TABT={nyheder:'Nyheder',kalender:'Kalender',video:'Video',mere:'Mere',admin:'Administration'};
   var curSub=null;
   function $(i){return document.getElementById(i)}
@@ -4667,5 +4689,125 @@ var fu=document.querySelector('#tab-forside > .rounded-3xl.overflow-hidden.md\\:
   if (tr0) { tr0.addEventListener('touchstart', function () { tr0.classList.add('nb-hold'); }, { passive: true }); ['touchend', 'touchcancel'].forEach(function (e) { tr0.addEventListener(e, function () { setTimeout(function () { tr0.classList.remove('nb-hold'); }, 1500); }, { passive: true }); }); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load); else load();
 })();
-</script></body>
+</script><script>
+/* RC48.47: Installér appen (PWA). Genbruger manifest.json + sw.js. Ingen konto, intet abonnement, ingen tracking.
+   - Direkte installation når browseren tilbyder det (beforeinstallprompt: Chrome/Edge/Samsung Internet m.fl.).
+   - Ellers en vejledning tilpasset enhed og browser (iPhone/iPad Safari, Mac Safari, Android, Windows/Mac Chrome/Edge m.fl.).
+   - Skjules helt i den installerede app og efter installation (display-mode: standalone / navigator.standalone / appinstalled). */
+(function () {
+  var KEY = 'vs_pwa_installed', deferred = null;
+  function ls(op, k, v) { try { return op === 'get' ? localStorage.getItem(k) : (op === 'set' ? localStorage.setItem(k, v) : localStorage.removeItem(k)); } catch (e) { return null; } }
+  function mq(q) { try { return window.matchMedia && window.matchMedia(q).matches; } catch (e) { return false; } }
+  function installedNow() {
+    return mq('(display-mode: standalone)') || mq('(display-mode: window-controls-overlay)') || mq('(display-mode: fullscreen)') ||
+      window.navigator.standalone === true || /^android-app:\/\//.test(document.referrer || '');
+  }
+  function isInstalled() { return installedNow() || ls('get', KEY) === '1'; }
+
+  function detect() {
+    var ua = navigator.userAgent || '', plat = navigator.platform || '', touch = navigator.maxTouchPoints || 0;
+    var ipad = /iPad/.test(ua) || (plat === 'MacIntel' && touch > 1 && !/iPhone/.test(ua));
+    var ios = /iPhone|iPod/.test(ua) || ipad;
+    var android = /Android/.test(ua), windows = /Windows/.test(ua);
+    var mac = !ios && /Macintosh|Mac OS X/.test(ua);
+    var inapp = /FBAN|FBAV|FB_IAB|Instagram|Messenger|LinkedInApp|Snapchat|Line\/|MicroMessenger|TikTok|Twitter/i.test(ua);
+    var edge = /Edg(e|A|iOS)?\//.test(ua), opera = /OPR\/|OPT\//.test(ua), samsung = /SamsungBrowser/.test(ua);
+    var firefox = /Firefox|FxiOS/.test(ua);
+    var chrome = /Chrome|CriOS/.test(ua) && !edge && !opera && !samsung;
+    var safari = /Safari/.test(ua) && !chrome && !firefox && !edge && !opera && !samsung;
+    return { ios: ios, ipad: ipad, android: android, windows: windows, mac: mac, inapp: inapp, edge: edge, samsung: samsung, firefox: firefox, chrome: chrome, safari: safari };
+  }
+
+  function refresh() {
+    var show = !isInstalled();
+    var a = document.getElementById('mere-install'), b = document.getElementById('tm-install');
+    if (a) a.classList.toggle('hidden', !show);
+    if (b) b.style.display = show ? '' : 'none';
+    try { if (show && window.lucide) lucide.createIcons(); } catch (e) {}
+  }
+
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault(); deferred = e;
+    if (ls('get', KEY) === '1' && !installedNow()) ls('del', KEY); // ikke installeret alligevel (fx afinstalleret) -> vis igen
+    refresh();
+  });
+  window.addEventListener('appinstalled', function () { deferred = null; ls('set', KEY, '1'); refresh(); });
+  try { var m = window.matchMedia('(display-mode: standalone)'); (m.addEventListener ? m.addEventListener('change', refresh) : m.addListener && m.addListener(refresh)); } catch (e) {}
+  document.addEventListener('DOMContentLoaded', refresh);
+  window.addEventListener('load', refresh);
+  window.addEventListener('pageshow', refresh);
+
+  function steps(list) { return '<ol class="space-y-3">' + list.map(function (t, i) {
+    return '<li class="flex gap-3"><span class="flex-shrink-0 w-7 h-7 rounded-full bg-v-blue text-white text-sm font-bold flex items-center justify-center">' + (i + 1) + '</span><span class="text-sm text-slate-700 leading-relaxed pt-0.5">' + t + '</span></li>'; }).join('') + '</ol>'; }
+
+  function guide() {
+    var d = detect(), title, intro = '', list = [], note = '';
+    var shareIcon = '<b>Del</b>-knappen (firkant med pil op)';
+    if (d.inapp) {
+      title = 'Åbn siden i din browser først';
+      intro = 'Du ser lige nu appen i en anden apps indbyggede browser. Her kan den ikke installeres.';
+      list = ['Tryk på menuen (<b>•••</b> eller <b>⋮</b>) i øverste hjørne.', 'Vælg <b>Åbn i Safari</b> eller <b>Åbn i browser</b> (Chrome).', 'Gå derefter til <b>Mere → Installér appen</b>.'];
+    } else if (d.ios && d.safari) {
+      title = d.ipad ? 'Installér på iPad' : 'Installér på iPhone';
+      list = ['Tryk på ' + shareIcon + (d.ipad ? ' øverst i Safari.' : ' i bunden af Safari.') + ' Kan du ikke se den, så tryk først på <b>•••</b>.', 'Rul ned og vælg <b>Føj til hjemmeskærm</b>.', 'Lad <b>Åbn som webapp</b> stå slået til, hvis den vises, og tryk <b>Tilføj</b>.'];
+      note = 'Appen ligger derefter på din hjemmeskærm med Venstre-ikonet og åbner i sit eget vindue.';
+    } else if (d.ios) {
+      title = d.ipad ? 'Installér på iPad' : 'Installér på iPhone';
+      list = ['Tryk på ' + shareIcon + ' i browserens menu eller adresselinje.', 'Vælg <b>Føj til hjemmeskærm</b> og tryk <b>Tilføj</b>.'];
+      note = 'Mangler valget, kræver det iOS 16.4 eller nyere. Ellers åbn siden i Safari og følg samme trin dér.';
+    } else if (d.android && d.samsung) {
+      title = 'Installér på Android (Samsung Internet)';
+      list = ['Tryk på menuen <b>≡</b> nederst til højre.', 'Vælg <b>Tilføj side til</b> og derefter <b>Startskærm</b> (eller <b>Installér app</b>).', 'Bekræft med <b>Tilføj</b>/<b>Installér</b>.'];
+    } else if (d.android && d.firefox) {
+      title = 'Installér på Android (Firefox)';
+      list = ['Tryk på menuen <b>⋮</b>.', 'Vælg <b>Installér</b> (eller <b>Føj til startskærm</b>).', 'Bekræft med <b>Tilføj</b>.'];
+    } else if (d.android) {
+      title = 'Installér på Android';
+      list = ['Tryk på menuen <b>⋮</b> øverst til højre' + (d.edge ? ' (Edge: <b>≡</b> i bunden)' : '') + '.', 'Vælg <b>Installér app</b> (eller <b>Føj til startskærm</b>).', 'Bekræft med <b>Installér</b>.'];
+      note = 'Ser du ikke valget, så prøv at åbne siden i Chrome.';
+    } else if (d.mac && d.safari) {
+      title = 'Installér på Mac (Safari)';
+      list = ['Klik på ' + shareIcon + ' i værktøjslinjen, eller vælg <b>Arkiv</b> i menulinjen.', 'Vælg <b>Føj til Dock</b>.', 'Tryk <b>Tilføj</b>.'];
+      note = 'Kræver Safari 17 eller nyere (macOS Sonoma).';
+    } else if ((d.windows || d.mac || /Linux|CrOS/.test(navigator.userAgent)) && d.edge) {
+      title = 'Installér på computer (Edge)';
+      list = ['Klik på <b>installér-ikonet</b> yderst til højre i adresselinjen, eller åbn menuen <b>⋯ → Apps → Installér dette websted som en app</b>.', 'Bekræft med <b>Installér</b>.'];
+      note = 'Appen får sit eget vindue og Venstre-ikonet i startmenuen/Launchpad og på proceslinjen/Dock.';
+    } else if ((d.windows || d.mac || /Linux|CrOS/.test(navigator.userAgent)) && d.chrome) {
+      title = 'Installér på computer (Chrome)';
+      list = ['Klik på <b>installér-ikonet</b> yderst til højre i adresselinjen, eller åbn menuen <b>⋮ → Cast, gem og del → Installér side som app</b>.', 'Bekræft med <b>Installér</b>.'];
+      note = 'Appen får sit eget vindue og Venstre-ikonet i startmenuen/Launchpad og på proceslinjen/Dock.';
+    } else if (d.firefox) {
+      title = 'Installation understøttes ikke i denne browser';
+      intro = 'Firefox kan ikke installere websteder som apps på computer.';
+      list = ['Åbn siden i <b>Chrome</b> eller <b>Edge</b> (Windows/Mac) eller <b>Safari</b> (Mac).', 'Gå til <b>Mere → Installér appen</b> og følg vejledningen.'];
+    } else {
+      title = 'Installér appen';
+      intro = 'Åbn siden i Safari (iPhone, iPad, Mac), Chrome eller Edge, så kan appen installeres.';
+      list = ['<b>iPhone/iPad:</b> Del-knappen → Føj til hjemmeskærm.', '<b>Android:</b> Menuen ⋮ → Installér app.', '<b>Windows/Mac:</b> Installér-ikonet i adresselinjen (Chrome/Edge) eller Del → Føj til Dock (Safari).'];
+    }
+    return '<h2 class="text-xl font-bold text-v-blue flex items-center gap-2"><i data-lucide="smartphone"></i> ' + title + '</h2>' +
+      '<div class="space-y-4">' +
+      '<div class="flex items-center gap-4 bg-white rounded-2xl border border-slate-200 p-4"><img src="icon-192.png" alt="" width="64" height="64" style="border-radius:14px;flex:0 0 auto"><p class="text-sm text-slate-700 leading-relaxed">Installér Venstre Syddjurs som en selvstændig app med eget Venstre-ikon. Det er gratis og kræver hverken konto eller abonnement.</p></div>' +
+      (intro ? '<p class="text-sm text-slate-700 leading-relaxed">' + intro + '</p>' : '') +
+      '<div class="bg-white rounded-2xl border border-slate-200 p-4">' + steps(list) + '</div>' +
+      (note ? '<p class="text-xs text-slate-500 leading-relaxed">' + note + '</p>' : '') +
+      '<p class="text-xs text-slate-500 leading-relaxed">Appen opdaterer sig selv, når der kommer en ny version.</p></div>';
+  }
+  window.pwaGuideHtml = guide;
+
+  window.pwaInstall = function () {
+    if (deferred) {
+      var p = deferred; deferred = null;
+      try {
+        p.prompt();
+        (p.userChoice || Promise.resolve()).then(function (c) { if (c && c.outcome === 'accepted') { ls('set', KEY, '1'); refresh(); } }).catch(function () {});
+      } catch (e) { if (typeof openSubpage === 'function') openSubpage('installer'); }
+      return;
+    }
+    if (typeof openSubpage === 'function') openSubpage('installer');
+  };
+})();
+</script>
+</body>
 </html>
